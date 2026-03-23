@@ -1,8 +1,12 @@
 {
-  "name": "com.arisen.core.native",
+  "$schema": "https://arisen.dev/schemas/package-v2.json",
+  "id": "com.arisen.core.native",
+  "name": "Arisen Core Native Provider",
   "version": "1.0.0",
-  "displayName": "Arisen Core Native Provider",
   "description": "The monolithic underlying C++ Core payload encompassing Foundation, HAL, and Diagnostics logic.",
   "type": "native",
+  "entry": {
+    "assembly": "Com.Arisen.Core.Native.dll"
+  },
   "dependencies": {}
 }
