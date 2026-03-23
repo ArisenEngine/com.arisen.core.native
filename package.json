@@ -8,5 +8,14 @@
   "entry": {
     "assembly": "Com.Arisen.Core.Native.dll"
   },
+  "nativeRuntimes": {
+    "win-x64": [
+      "Core.Foundation.dll",
+      "Core.Diagnostic.dll",
+      "Core.HAL.dll",
+      "Core.RHI.dll",
+      "Core.ShaderCompiler.dll"
+    ]
+  },
   "dependencies": {}
 }
