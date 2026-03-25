@@ -2,11 +2,8 @@
   "Id": "com.arisen.core.native",
   "Name": "Arisen Core Native Provider",
   "Version": "1.0.0",
-  "Description": "The monolithic underlying C\u002B\u002B Core payload encompassing Foundation, HAL, and Diagnostics logic.",
+  "Description": "The monolithic underlying C++ Core payload encompassing Foundation, HAL, and Diagnostics logic.",
   "Type": "managed",
-  "Entry": {
-    "Assembly": "Com.Arisen.Core.Native.dll"
-  },
   "Dependencies": {},
   "NativeRuntimes": {
     "win-x64": [
@@ -16,5 +13,8 @@
       "Core.RHI.dll",
       "Core.ShaderCompiler.dll"
     ]
+  },
+  "entry": {
+    "assembly": "Com.Arisen.Core.Native.dll"
   }
 }
