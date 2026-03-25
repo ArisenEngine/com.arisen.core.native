@@ -1,14 +1,14 @@
 {
-  "$schema": "https://arisen.dev/schemas/package-v2.json",
-  "id": "com.arisen.core.native",
-  "name": "Arisen Core Native Provider",
-  "version": "1.0.0",
-  "description": "The monolithic underlying C++ Core payload encompassing Foundation, HAL, and Diagnostics logic.",
-  "type": "native",
-  "entry": {
-    "assembly": "Com.Arisen.Core.Native.dll"
+  "Id": "com.arisen.core.native",
+  "Name": "Arisen Core Native Provider",
+  "Version": "1.0.0",
+  "Description": "The monolithic underlying C\u002B\u002B Core payload encompassing Foundation, HAL, and Diagnostics logic.",
+  "Type": "managed",
+  "Entry": {
+    "Assembly": "Com.Arisen.Core.Native.dll"
   },
-  "nativeRuntimes": {
+  "Dependencies": {},
+  "NativeRuntimes": {
     "win-x64": [
       "Core.Foundation.dll",
       "Core.Diagnostic.dll",
@@ -16,6 +16,5 @@
       "Core.RHI.dll",
       "Core.ShaderCompiler.dll"
     ]
-  },
-  "dependencies": {}
+  }
 }

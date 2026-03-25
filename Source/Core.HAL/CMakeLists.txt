@@ -11,8 +11,8 @@ add_library(Core.HAL SHARED
 )
 
 target_include_directories(Core.HAL PRIVATE
-    `${CMAKE_SOURCE_DIR}/Packages/com.arisen.core.native/Source/Core.Foundation
-    `${CMAKE_SOURCE_DIR}/Packages/com.arisen.core.native/Source/Core.Diagnostic
+    "${CMAKE_CURRENT_SOURCE_DIR}/../Core.Foundation"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../Core.Diagnostic"
     ${CMAKE_CURRENT_SOURCE_DIR}/Common
     ${CMAKE_CURRENT_SOURCE_DIR}/Windowing
     )    

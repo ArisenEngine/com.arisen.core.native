@@ -11,7 +11,7 @@ add_library(Core.Diagnostic SHARED
 )
 
 target_include_directories(Core.Diagnostic PRIVATE
-    `${CMAKE_SOURCE_DIR}/Packages/com.arisen.core.native/Source/Core.Foundation
+    "${CMAKE_CURRENT_SOURCE_DIR}/../Core.Foundation"
     )  
 
 target_include_directories(Core.Diagnostic PUBLIC
