@@ -1,8 +1,21 @@
 #pragma once
+#include <cstdint>
 
 #ifndef ARISEN_PROFILER_ENABLED
 #define ARISEN_PROFILER_ENABLED 0
 #endif
+
+namespace ArisenEngine::Diagnostics
+{
+    /**
+     * @brief Context for a profiling zone, matches TracyCZoneCtx.
+     */
+    struct ProfilerZoneContext
+    {
+        uint32_t id;
+        int32_t active;
+    };
+}
 
 #if ARISEN_PROFILER_ENABLED
 
