@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.29)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(DXC_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../3rdparty/dxc")
+set(DXC_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../3rdparty/dxc")
 
 # Collect code files
 collect_sources(ALL_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR})
@@ -39,7 +39,7 @@ target_link_libraries(Core.ShaderCompiler
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     add_compile_options(-Wno-attributes)
 endif()
-setup_dxc_for_target(Core.ShaderCompiler "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../3rdparty/dxc")
+setup_dxc_for_target(Core.ShaderCompiler "${CMAKE_CURRENT_SOURCE_DIR}/../../3rdparty/dxc")
 
 set_target_properties(Core.ShaderCompiler PROPERTIES FOLDER "Core")
 
