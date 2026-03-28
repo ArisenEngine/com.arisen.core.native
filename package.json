@@ -14,7 +14,8 @@
       "Core.Diagnostic.dll",
       "Core.HAL.dll",
       "Core.RHI.dll",
-      "Core.ShaderCompiler.dll"
+      "Core.ShaderCompiler.dll",
+      "spdlog.dll"
     ]
   }
 }
