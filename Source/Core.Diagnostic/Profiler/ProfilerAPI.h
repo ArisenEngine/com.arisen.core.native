@@ -1,4 +1,5 @@
 #pragma once
+#include "Profiler.h"
 #include "Base/BindingMacros.h"
 #include "../CoreDiagnosticCommon.h"
 
@@ -12,12 +13,6 @@ namespace ArisenEngine::Diagnostics
      * @brief Context for a profiling zone, matches TracyCZoneCtx.
      */
     ARISEN_BIND_STRUCT(ProfilerZoneContext)
-
-    struct ProfilerZoneContext
-    {
-        uint32_t id;
-        int32_t active;
-    };
 
     /**
      * @brief Bridge functions for the Profiler system.

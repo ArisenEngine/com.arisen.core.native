@@ -3,7 +3,7 @@
   "name": "Arisen Core Native Provider",
   "version": "1.0.0",
   "description": "The monolithic underlying C\u002B\u002B Core payload encompassing Foundation, HAL, and Diagnostics logic.",
-  "type": "managed",
+  "type": "hybrid",
   "entry": {
     "assembly": "Com.Arisen.Core.Native.dll"
   },
@@ -15,7 +15,10 @@
       "Core.HAL.dll",
       "Core.RHI.dll",
       "Core.ShaderCompiler.dll",
-      "spdlog.dll"
+      "spdlog.dll",
+      "TracyClient.dll",
+      "3rdparty/dxc/bin/x64/dxcompiler.dll",
+      "3rdparty/dxc/bin/x64/dxil.dll"
     ]
   }
 }

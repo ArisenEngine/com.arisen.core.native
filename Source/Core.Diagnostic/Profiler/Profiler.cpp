@@ -12,7 +12,6 @@ namespace ArisenEngine::Diagnostics
     {
 #if ARISEN_PROFILER_ENABLED
         // Allocate a source location for the dynamic zone name.
-        // Note: In highly performance-sensitive C# code, frequent allocation of srcloc should be avoided.
         uint64_t srcloc = ___tracy_alloc_srcloc(0, "ProfilerAPI.cs", 0, "CSharpZone", 10, 0);
         TracyCZoneCtx ctx = ___tracy_emit_zone_begin_alloc(srcloc, 1);
         if (name)
@@ -21,7 +20,7 @@ namespace ArisenEngine::Diagnostics
         }
         return {ctx.id, ctx.active};
 #else
-        return { 0, 0 };
+        return {0, 0};
 #endif
     }
 
