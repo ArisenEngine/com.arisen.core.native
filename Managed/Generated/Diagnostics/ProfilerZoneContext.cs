@@ -7,7 +7,6 @@ namespace Arisen.Native.Diagnostics
     [StructLayout(LayoutKind.Sequential)]
     public struct ProfilerZoneContext
     {
-        public uint Id;
-        public int Active;
+        public ulong Handle;
     }
 }
