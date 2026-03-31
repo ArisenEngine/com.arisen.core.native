@@ -8,6 +8,9 @@
 #include <iostream>
 #include <thread>
 #include <sstream>
+#include <chrono>
+#include <iomanip>
+#include <ctime>
 
 #if defined(__has_include) && __has_include(<stacktrace>) && __cpp_lib_stacktrace >= 202011
 #define HAS_STD_STACKTRACE 1
@@ -66,7 +69,14 @@ namespace ArisenEngine::Diagnostics
             std::error_code _ec;
             std::filesystem::create_directories(log_dir, _ec);
 
-            const auto log_file = (log_dir / "player.log").string();
+            auto now = std::chrono::system_clock::now();
+            auto in_time_t = std::chrono::system_clock::to_time_t(now);
+            std::tm tm;
+            localtime_s(&tm, &in_time_t); // Thread-safe on Windows
+
+            std::stringstream ss;
+            ss << "player_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".log";
+            const auto log_file = (log_dir / ss.str()).string();
 
             constexpr size_t queue_size = 8192;
             constexpr size_t num_threads = 1;
