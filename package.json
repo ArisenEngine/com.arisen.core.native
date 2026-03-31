@@ -5,7 +5,16 @@
   "description": "The monolithic underlying C\u002B\u002B Core payload encompassing Foundation, HAL, and Diagnostics logic.",
   "type": "hybrid",
   "entry": {
-    "assembly": "Com.Arisen.Core.Native.dll"
+    "assembly": "Com.Arisen.Core.Native.dll",
+    "class": "ArisenEngine.Core.Native.CoreNativePackage"
+  },
+  "services": {
+    "provides": [
+      {
+        "interface": "ArisenKernel.Contracts.IRHIDevice",
+        "priority": 100
+      }
+    ]
   },
   "dependencies": {},
   "nativeRuntimes": {
