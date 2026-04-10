@@ -124,6 +124,7 @@ namespace ArisenEngine::RHI
 
         // Handle Resolution
         virtual RHICommandBuffer* GetCommandBuffer(RHICommandBufferHandle handle) = 0;
+        virtual void* GetSharedWin32Handle(RHIImageHandle handle) { return nullptr; }
 
         // Optional per-frame update hook for GPU completion polling / automatic GC.
         // Default: no-op.

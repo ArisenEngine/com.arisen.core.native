@@ -1,4 +1,4 @@
-// RHIDeviceBridge.cpp �?extern "C" bridge for RHIDevice virtual methods
+﻿// RHIDeviceBridge.cpp 鈥?extern "C" bridge for RHIDevice virtual methods
 #include "RHI/Core/RHIDevice.h"
 #include "RHI/Core/RHIFactory.h"
 #include "RHI/Core/RHIInstance.h"
@@ -139,7 +139,17 @@ RHI_DLL uint64_t RHIDevice_GetDescriptorPoolHandle(RHIDevice* dev)
     RHIDescriptorPoolHandle handle = dev->GetDescriptorPoolHandle();
     return *reinterpret_cast<uint64_t*>(&handle);
 }
+
+RHI_DLL void* RHIDevice_GetSharedWin32Handle(RHIDevice* dev, uint32_t index, uint32_t generation)
+{
+    RHIImageHandle handle;
+    handle.index = index;
+    handle.generation = generation;
+    return dev->GetSharedWin32Handle(handle);
+}
 } // extern "C"
 
+
 ARISEN_BIND_END_BRIDGE()
+
 

@@ -43,6 +43,7 @@ namespace ArisenEngine::RHI
         UInt32 queueFamilyIndexCount;
         const void* pQueueFamilyIndices;
         ERHIMemoryUsage memoryUsage;
+        bool bExportSharedWin32Handle = false;
     };
 
     // CppSharp-P0 RESOLVED: std::optional<UInt32> replaced with UInt32, 0 = auto-detect from parent image.
