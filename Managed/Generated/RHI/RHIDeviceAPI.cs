@@ -64,5 +64,8 @@ namespace Arisen.Native.RHI
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern ulong RHIDevice_GetDescriptorPoolHandle(IntPtr dev);
 
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr RHIDevice_GetSharedWin32Handle(IntPtr dev, uint index, uint generation);
+
     }
 }

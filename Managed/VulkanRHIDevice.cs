@@ -39,4 +39,10 @@ public class VulkanRHIDevice : IRHIDevice
             RHIDeviceAPI.RHIDevice_WaitQueueTicket(m_NativeHandle, ticket);
         }
     }
+
+    public IntPtr GetSharedWin32Handle(uint index, uint generation)
+    {
+        if (!IsValid) return IntPtr.Zero;
+        return RHIDeviceAPI.RHIDevice_GetSharedWin32Handle(m_NativeHandle, index, generation);
+    }
 }
