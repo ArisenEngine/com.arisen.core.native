@@ -4,7 +4,7 @@
 // Arisen Engine Binding Annotation Macros
 // ============================================================================
 //
-// These macros expand to NOTHING at compile time — zero impact on C++ builds.
+// These macros expand to NOTHING at compile time - zero impact on C++ builds.
 // They serve as TEXT MARKERS for the BindingGenerator tool to scan and produce
 // clean C# P/Invoke code without any post-processing.
 //

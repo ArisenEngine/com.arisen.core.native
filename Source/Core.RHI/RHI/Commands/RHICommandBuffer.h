@@ -331,9 +331,11 @@ namespace ArisenEngine::RHI
         }
 
     protected:
-        // TODO(CppSharp-P1): friend class RHIVkCommandBufferPool / RHIVkQueue 是后端类型，
-        // 不应出现在抽象 Core.RHI 头文件中。CppSharp 解析此头文件时会尝试解析这些类型。
-        // 方案: 使用 protected virtual 方法替代 friend 访问，或在后端 .cpp 中使用 static_cast。
+        // TODO(CppSharp-P1): friend class RHIVkCommandBufferPool / RHIVkQueue are backend types
+        // and should not appear in the abstract Core.RHI headers. CppSharp will try to parse
+        // these types when parsing this header.
+        // Solution: Use protected virtual methods instead of friend access, or use static_cast 
+        // in backend .cpp files.
         friend class RHICommandBufferPool;
         friend class RHIVkCommandBufferPool;
         friend class RHIVkQueue; // Added for tracking access
@@ -345,8 +347,10 @@ namespace ArisenEngine::RHI
         RHIDevice* GetDevice() const { return m_Device; }
         ECommandBufferState GetState() const { return m_State; }
         void SetState(ECommandBufferState state) { m_State = state; }
-        // TODO(Interface-P2): 访问控制段混乱。多个 public:/protected: 段交替出现 (L279, L728, L734, L740, L745)。
-        // 建议统一为: public → protected → private 各一个段，按职责分组方法。
+        // TODO(Interface-P2): Access control sections are disorganized. Multiple public:/protected: 
+        // sections alternate (L279, L728, L734, L740, L745).
+        // Recommendation: Unify into one public -> protected -> private section each, 
+        // grouping methods by responsibility.
     public:
         ECommandBufferLevel GetLevel() const { return m_Level; }
 

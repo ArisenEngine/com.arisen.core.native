@@ -92,7 +92,7 @@ namespace ArisenEngine::RHI
     {
     public:
         virtual ~RHIAccelerationStructure() = default;
-        // CppSharp: exclude from binding — backend-only void* accessor.
+        // CppSharp: exclude from binding - backend-only void* accessor.
         virtual void* GetHandle() const = 0;
         virtual UInt64 GetDeviceAddress() const = 0;
     };

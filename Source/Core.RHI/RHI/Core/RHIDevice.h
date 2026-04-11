@@ -35,8 +35,8 @@ namespace ArisenEngine::RHI
      * @brief Internal interface for RHI backends.
      * Contains methods that should not be exposed directly to the user.
      * 
-     * TODO(CppSharp): IRHIBackend 不需要导出到 C#。确保 CppSharp 配置中跳过此类。
-     * 它是纯内部后端接口，上层管线不应直接使用。
+     * TODO(CppSharp): IRHIBackend does not need to be exported to C#. Ensure it is skipped in CppSharp configuration.
+     * It is a pure internal backend interface; the upper pipeline should not use it directly.
      */
     class IRHIBackend
     {
@@ -94,7 +94,7 @@ namespace ArisenEngine::RHI
         RHIInstance* GetInstance() const { return m_Instance; }
         virtual UInt32 GetMaxFramesInFlight() const = 0;
 
-        // CppSharp: exclude from binding — backend-only void* accessors.
+        // CppSharp: exclude from binding - backend-only void* accessors.
         virtual void* GetHandle() const = 0;
         virtual void DeviceWaitIdle() const = 0;
         virtual void* GetGraphicsQueue() = 0;

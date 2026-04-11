@@ -18,7 +18,7 @@ namespace ArisenEngine::RHI
         NO_COPY_NO_MOVE_NO_DEFAULT(RHIDescriptorSet)
         virtual ~RHIDescriptorSet() noexcept;
 
-        // CppSharp: exclude from binding — backend-only void* accessor.
+        // CppSharp: exclude from binding - backend-only void* accessor.
         virtual void* GetHandle() = 0;
 
         virtual bool IsBindless() const { return false; }

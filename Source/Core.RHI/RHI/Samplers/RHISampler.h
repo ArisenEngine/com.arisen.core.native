@@ -35,7 +35,7 @@ namespace ArisenEngine::RHI
         NO_COPY_NO_MOVE_NO_DEFAULT(RHISampler)
         virtual ~RHISampler() noexcept;
         RHISampler(RHIDevice* device);
-        // CppSharp: exclude from binding — backend-only void* accessor.
+        // CppSharp: exclude from binding - backend-only void* accessor.
         virtual void* GetHandle() const = 0;
 
         RHIDevice* GetDevice() const
