@@ -19,5 +19,11 @@ namespace Arisen.Native.RHI
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern ulong RHISwapChain_GetImageView(IntPtr swapChain, uint frameIndex);
 
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr RHISwapChain_GetSharedWin32Handle(IntPtr swapChain, uint frameIndex);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void RHISwapChain_SetResolution(IntPtr sc, uint width, uint height);
+
     }
 }

@@ -36,7 +36,18 @@ RHI_DLL uint64_t RHISwapChain_GetImageView(SwapChain* swapChain, uint32_t frameI
     auto handle = swapChain->GetImageView(frameIndex);
     return *reinterpret_cast<uint64_t*>(&handle);
 }
+
+RHI_DLL void* RHISwapChain_GetSharedWin32Handle(SwapChain* swapChain, uint32_t frameIndex)
+{
+    if (!swapChain) return nullptr;
+    return swapChain->GetSharedWin32Handle(frameIndex);
+}
 } // extern "C"
+
+RHI_DLL void RHISwapChain_SetResolution(RHISwapChain* sc, uint32_t width, uint32_t height)
+{
+    sc->SetResolution(width, height);
+}
 
 ARISEN_BIND_END_BRIDGE()
 

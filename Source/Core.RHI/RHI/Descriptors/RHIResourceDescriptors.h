@@ -13,8 +13,8 @@
 
 namespace ArisenEngine::RHI
 {
-    // TODO(CppSharp-P1): RHIBufferDescriptor::pQueueFamilyIndices 是 const void*，CppSharp 无法正确映射。
-    // 考虑替换为 Containers::Vector<UInt32> 或固定大小数组 UInt32 queueFamilyIndices[4]。
+    // TODO(CppSharp-P1): RHIBufferDescriptor::pQueueFamilyIndices is const void*, which CppSharp cannot map correctly.
+    // Consider replacing with Containers::Vector<UInt32> or a fixed-size array like UInt32 queueFamilyIndices[4].
     struct RHIBufferDescriptor
     {
         UInt32 createFlagBits;

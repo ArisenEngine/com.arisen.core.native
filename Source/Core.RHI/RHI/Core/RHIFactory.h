@@ -18,11 +18,12 @@ namespace ArisenEngine::RHI
     struct RenderPassDescriptor; // Assuming this exists or will be added
     struct RHIFrameBufferDescriptor; // Assuming this exists or will be added
 
-    // TODO(CppSharp-P1): RHIFactory 缺少 RHI_DLL 导出宏。虽然通过 RHIDevice::GetFactory() 间接访问，
-    // 但 CppSharp 需要看到此类才能生成正确的绑定。考虑添加 RHI_DLL 或通过 opaque handle 暴露。
-    // TODO(Interface-P1): 考虑将 RHIFactory 扩展为 RHIResourceManager，整合目前分散在
-    // RHIDevice 中的 Buffer/Image 操作方法 (BufferMemoryCopy, MapBuffer, GetBufferSize 等)。
-    // 使资源的 Create/Release/Query/Map 全部通过同一接口完成。
+    // TODO(CppSharp-P1): RHIFactory is missing the RHI_DLL export macro. Although accessed indirectly via 
+    // RHIDevice::GetFactory(), CppSharp need to see this class to generate correct bindings. 
+    // Consider adding RHI_DLL or exposing via an opaque handle.
+    // TODO(Interface-P1): Consider extending RHIFactory to RHIResourceManager, integrating Buffer/Image 
+    // operational methods (BufferMemoryCopy, MapBuffer, GetBufferSize, etc.) that are currently scattered in RHIDevice.
+    // This would allow Resource Create/Release/Query/Map to be completed through the same interface.
     class RHIFactory
     {
     public:
@@ -73,7 +74,7 @@ namespace ArisenEngine::RHI
         // Resource Management (Moved from RHIDevice)
         virtual void BufferMemoryCopy(RHIBufferHandle handle, const void* src, UInt64 size, UInt64 offset = 0) = 0;
 
-        // Async transfer API — enqueues a copy and returns a ticket for later synchronization.
+        // Async transfer API - enqueues a copy and returns a ticket for later synchronization.
         // Caller must call FlushTransfers() or WaitForTicket() before using the buffer.
         virtual RHIGpuTicket BufferMemoryCopyAsync(RHIBufferHandle handle, const void* src, UInt64 size, UInt64 offset = 0) = 0;
 

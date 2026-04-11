@@ -22,7 +22,7 @@ namespace ArisenEngine::RHI
         virtual EDescriptorHeapType GetType() const = 0;
         virtual UInt32 GetDescriptorSize() const = 0;
         virtual UInt32 GetCapacity() const = 0;
-        // CppSharp: exclude from binding — backend-only void* accessor.
+        // CppSharp: exclude from binding - backend-only void* accessor.
         virtual void* GetNativeHandle() const = 0;
 
         // Allocate a range of descriptors. Returns the index of the first descriptor.
