@@ -338,23 +338,28 @@ namespace ArisenEngine::HAL
 
     HAL_DLL Window CreateNewWindow(const WindowInitInfo* const initInfo)
     {
-        // Safeguard: Enable Per-Monitor V2 DPI awareness for physical pixel accuracy.
-        // This ensures GetClientRect returns values matching the physical monitor resolution (1:1 pixels).
-        if (SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2))
+        static bool dpiAwarenessChecked = false;
+        if (!dpiAwarenessChecked)
         {
-            LOG_INFO("[Win32HALWindow]: Successfully set DPI awareness to Per-Monitor V2.");
-        }
-        else
-        {
-            DWORD error = GetLastError();
-            if (error == ERROR_ACCESS_DENIED)
+            // Safeguard: Enable Per-Monitor V2 DPI awareness for physical pixel accuracy.
+            // This ensures GetClientRect returns values matching the physical monitor resolution (1:1 pixels).
+            if (SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2))
             {
-                LOG_WARN("[Win32HALWindow]: DPI awareness was already set by host or manifest.");
+                LOG_INFO("[Win32HALWindow]: Successfully set DPI awareness to Per-Monitor V2.");
             }
             else
             {
-                LOG_ERRORF("[Win32HALWindow]: Failed to set DPI awareness context. Error={0}", error);
+                DWORD error = GetLastError();
+                if (error == ERROR_ACCESS_DENIED)
+                {
+                    LOG_INFO("[Win32HALWindow]: DPI awareness was already set by host or manifest.");
+                }
+                else
+                {
+                    LOG_ERRORF("[Win32HALWindow]: Failed to set DPI awareness context. Error={0}", error);
+                }
             }
+            dpiAwarenessChecked = true;
         }
 
         WindowProc callback{initInfo ? initInfo->callback : nullptr};
