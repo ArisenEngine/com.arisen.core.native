@@ -160,29 +160,47 @@ namespace ArisenEngine::HAL
                 }
                 break;
 
+            case WM_ENTERSIZEMOVE:
+                // Safeguard: Entering a modal loop for resizing/moving. 
+                // We MUST release capture so the system can handle mouse input for the modal loop.
+                ReleaseCapture();
+                break;
+
             case WM_EXITSIZEMOVE:
                 info = GetInfoFromHandle(hwnd);
-                if (info)
                 {
-                    GetClientRect(info->hwnd, info->isFullScreen ? &info->fullScreenArea : &info->clientArea);
+                    UInt32 width{0}, height{0};
+                    RECT rect;
+                    if (GetClientRect(hwnd, &rect))
+                    {
+                        width = rect.right - rect.left;
+                        height = rect.bottom - rect.top;
+                    }
 
                     LONG_PTR longPtr{GetWindowLongPtr(hwnd, WINDOW_RESIZE_CALLBACK)};
-
                     if (longPtr)
                     {
-                        auto width = info->isFullScreen
-                                         ? info->fullScreenArea.right - info->fullScreenArea.left
-                                         : info->clientArea.right - info->clientArea.left;
-                        auto height = info->isFullScreen
-                                          ? info->fullScreenArea.bottom - info->fullScreenArea.top
-                                          : info->clientArea.bottom - info->clientArea.top;
                         ((WindowExitResize)longPtr)(hwnd, width, height);
                     }
 
-                    // Fix for sticky mouse after resize
+                    // Ensure any lingering capture and clipping is cleared
                     ReleaseCapture();
+                    ClipCursor(NULL);
+
+                    // DO NOT return 0 here; allow the message to flow to the engine's callback (WINDOW_PROC_CALLBACK)
+                    // and DefWindowProc so they can perform their own cleanup.
+                    break;
                 }
+
+            case WM_PAINT:
+                // Safeguard: Tell Windows the update region is validated to prevent infinite message loop
+                ValidateRect(hwnd, NULL);
                 break;
+
+            case WM_ERASEBKGND:
+                // Safeguard: Return non-zero to prevent Windows from clearing the background with the default brush, 
+                // eliminating flickering during resizing.
+                return 1;
 
             case WM_SYSCOMMAND:
                 // Safeguard: If entering a move/size loop, ensure we release capture so the system can take over.
@@ -201,11 +219,18 @@ namespace ArisenEngine::HAL
                 break;
             }
 
+            LRESULT callbackResult = -1; // -1 means "Not Handled, proceed to DefWindowProc"
             LONG_PTR longPtr{GetWindowLongPtr(hwnd, WINDOW_PROC_CALLBACK)};
 
             if (longPtr)
             {
-                ((WindowProc)longPtr)(hwnd, msg, wparam, lparam);
+                callbackResult = ((WindowProc)longPtr)(hwnd, msg, wparam, lparam);
+            }
+
+            // If the callback returned anything other than -1, we consider it handled and skip DefWindowProc.
+            if (callbackResult != (LRESULT)-1)
+            {
+                return callbackResult;
             }
 
             return DefWindowProc(hwnd, msg, wparam, lparam);
@@ -313,6 +338,25 @@ namespace ArisenEngine::HAL
 
     HAL_DLL Window CreateNewWindow(const WindowInitInfo* const initInfo)
     {
+        // Safeguard: Enable Per-Monitor V2 DPI awareness for physical pixel accuracy.
+        // This ensures GetClientRect returns values matching the physical monitor resolution (1:1 pixels).
+        if (SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2))
+        {
+            LOG_INFO("[Win32HALWindow]: Successfully set DPI awareness to Per-Monitor V2.");
+        }
+        else
+        {
+            DWORD error = GetLastError();
+            if (error == ERROR_ACCESS_DENIED)
+            {
+                LOG_WARN("[Win32HALWindow]: DPI awareness was already set by host or manifest.");
+            }
+            else
+            {
+                LOG_ERRORF("[Win32HALWindow]: Failed to set DPI awareness context. Error={0}", error);
+            }
+        }
+
         WindowProc callback{initInfo ? initInfo->callback : nullptr};
         WindowExitResize resizeCallback{initInfo ? initInfo->resizeCallback : nullptr};
         WindowResize resizingCallback{initInfo ? initInfo->resizingCallback : nullptr};
