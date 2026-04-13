@@ -21,6 +21,7 @@ namespace ArisenEngine::Diagnostics
         void SetServerityLevel(LogLevel level);
         void BindCallback(LogCallback callback);
         bool Initialize();
+        void Flush();
 
         static Logger& GetInstance();
         static void Shutdown();

@@ -23,6 +23,9 @@ namespace Arisen.Native.Diagnostics
         public static extern bool Logger_Initialize(bool bindCallback);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void Logger_Flush();
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void Logger_Shutdown();
 
     }

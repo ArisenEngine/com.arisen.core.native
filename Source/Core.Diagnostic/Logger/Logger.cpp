@@ -121,6 +121,14 @@ namespace ArisenEngine::Diagnostics
         return _log_instnace;
     }
 
+    void Logger::Flush()
+    {
+        if (auto logger = spdlog::default_logger())
+        {
+            logger->flush();
+        }
+    }
+
     void Logger::Shutdown()
     {
         ArisenEngine::Diagnostics::Log::SetHandler(nullptr);
@@ -250,6 +258,11 @@ namespace ArisenEngine::Diagnostics
     bool Logger_Initialize(bool bindCallback)
     {
         return Logger::GetInstance().Initialize();
+    }
+
+    void Logger_Flush()
+    {
+        Logger::GetInstance().Flush();
     }
 
     void Logger_Shutdown()

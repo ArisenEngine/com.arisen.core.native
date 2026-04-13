@@ -17,6 +17,7 @@ namespace ArisenEngine::Diagnostics
     DIAGNOSTIC_DLL void Logger_SetServerityLevel(LogLevel level);
     DIAGNOSTIC_DLL void Logger_BindCallback(void* callback);
     DIAGNOSTIC_DLL bool Logger_Initialize(bool bindCallback);
+    DIAGNOSTIC_DLL void Logger_Flush();
     DIAGNOSTIC_DLL void Logger_Shutdown();
     }
 
