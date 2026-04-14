@@ -40,6 +40,15 @@ public class VulkanRHIDevice : IRHIDevice
         }
     }
 
+    public ulong GetCompletedTicket()
+    {
+        if (IsValid)
+        {
+            return RHIDeviceAPI.RHIDevice_GetCompletedSubmitTicket(m_NativeHandle);
+        }
+        return 0;
+    }
+
     public IntPtr GetSharedWin32Handle(uint index, uint generation)
     {
         if (!IsValid) return IntPtr.Zero;
