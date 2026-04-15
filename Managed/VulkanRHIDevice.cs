@@ -13,6 +13,8 @@ public class VulkanRHIDevice : IRHIDevice
         m_NativeHandle = nativeHandle;
     }
 
+    public IntPtr NativeHandle => m_NativeHandle;
+
     public bool IsValid => m_NativeHandle != IntPtr.Zero;
 
     public void WaitIdle()
