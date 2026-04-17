@@ -431,6 +431,11 @@ namespace ArisenEngine::HAL
             (LPVOID)(uintptr_t)id
         );
 
+        if (!info.hwnd)
+        {
+            LOG_ERRORF("[Win32HALWindow]: CreateWindowExW failed. Parent={0} Error={1}", (void*)parent, GetLastError());
+        }
+
         if (info.hwnd)
         {
             if (callback)

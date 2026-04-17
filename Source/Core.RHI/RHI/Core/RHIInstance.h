@@ -64,7 +64,7 @@ namespace ArisenEngine::RHI
         /// \return api env value
         virtual String GetEnvString() const = 0;
 
-        virtual void CreateSurface(UInt32 windowId) = 0;
+        virtual void CreateSurface(UInt32 windowId, UInt32 width = 0, UInt32 height = 0) = 0;
         virtual void DestroySurface(UInt32 windowId) = 0;
         virtual RHISurface& GetSurface(UInt32 windowId) = 0;
         virtual void SetResolution(UInt32 windowId, UInt32 width, UInt32 height) = 0;

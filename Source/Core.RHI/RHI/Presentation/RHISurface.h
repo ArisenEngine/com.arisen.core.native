@@ -17,6 +17,7 @@ namespace ArisenEngine::RHI
         virtual void InitSwapChain() = 0;
 
         virtual RHISwapChain* GetSwapChain() = 0;
+        virtual void SetResolution(UInt32 width, UInt32 height) = 0;
 
     protected:
         UInt32 m_RenderWindowId;

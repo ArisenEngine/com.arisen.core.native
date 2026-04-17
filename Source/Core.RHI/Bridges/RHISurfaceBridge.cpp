@@ -1,8 +1,9 @@
-// RHISurfaceBridge.cpp â€?extern "C" bridge for RHISurface
+// RHISurfaceBridge.cpp - extern "C" bridge for RHISurface
 #include "RHI/Presentation/RHISurface.h"
 #include "RHI/Presentation/RHISwapChain.h"
 #include "Base/BindingMacros.h"
 
+using namespace ArisenEngine;
 using namespace ArisenEngine::RHI;
 
 ARISEN_BIND_PACKAGE("com.arisen.rhi.core")
@@ -19,14 +20,16 @@ RHI_DLL void* RHISurface_GetSwapChain(RHISurface* surface)
 {
     if (!surface)
     {
-        printf("[DEBUG] RHISurface_GetSwapChain: surface is NULL!\n");
         return nullptr;
     }
-    void* sc = static_cast<void*>(surface->GetSwapChain());
-    printf("[DEBUG] RHISurface_GetSwapChain: surface=%p, swapchain=%p\n", surface, sc);
-    return sc;
+    return static_cast<void*>(surface->GetSwapChain());
+}
+
+RHI_DLL void RHISurface_SetResolution(RHISurface* surface, UInt32 width, UInt32 height)
+{
+    if (!surface) return;
+    surface->SetResolution(width, height);
 }
 } // extern "C"
 
 ARISEN_BIND_END_BRIDGE()
-
