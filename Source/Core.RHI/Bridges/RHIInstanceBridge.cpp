@@ -1,4 +1,4 @@
-// RHIInstanceBridge.cpp â€?extern "C" bridge for RHIInstance virtual methods
+ï»¿// RHIInstanceBridge.cpp - extern "C" bridge for RHIInstance virtual methods
 #include "RHI/Core/RHIInstance.h"
 #include "RHI/Core/RHIDevice.h"
 #include "RHI/Definitions/CoreRHICommon.h"
@@ -20,9 +20,9 @@ RHI_DLL void RHIInstance_InitLogicDevices(RHIInstance* inst)
     inst->InitLogicDevices();
 }
 
-RHI_DLL void RHIInstance_CreateSurface(RHIInstance* inst, uint32_t windowId)
+RHI_DLL void RHIInstance_CreateSurface(RHIInstance* inst, uint32_t windowId, uint32_t width, uint32_t height)
 {
-    inst->CreateSurface(windowId);
+    inst->CreateSurface(windowId, width, height);
 }
 
 RHI_DLL void RHIInstance_DestroySurface(RHIInstance* inst, uint32_t windowId)
@@ -99,4 +99,3 @@ RHI_DLL int RHIInstance_GetSuitablePresentMode(RHIInstance* inst, uint32_t windo
 } // extern "C"
 
 ARISEN_BIND_END_BRIDGE()
-
