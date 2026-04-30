@@ -1,4 +1,4 @@
-﻿// RHIInstanceBridge.cpp - extern "C" bridge for RHIInstance virtual methods
+// RHIInstanceBridge.cpp - extern "C" bridge for RHIInstance virtual methods
 #include "RHI/Core/RHIInstance.h"
 #include "RHI/Core/RHIDevice.h"
 #include "RHI/Definitions/CoreRHICommon.h"
@@ -39,6 +39,11 @@ RHI_DLL void* RHIInstance_GetLogicalDevice(RHIInstance* inst, uint32_t windowId)
 {
     // windowId is now optional or 0 for main device
     return static_cast<void*>(inst->GetLogicalDevice(windowId));
+}
+
+RHI_DLL void* RHIInstance_GetSurface(RHIInstance* inst, uint32_t windowId)
+{
+    return static_cast<void*>(&inst->GetSurface(windowId));
 }
 
 RHI_DLL void RHIInstance_CreateLogicDevice(RHIInstance* inst, uint32_t windowId)

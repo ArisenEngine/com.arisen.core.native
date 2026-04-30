@@ -29,6 +29,9 @@ namespace Arisen.Native.RHI
         public static extern IntPtr RHIInstance_GetLogicalDevice(IntPtr inst, uint windowId);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr RHIInstance_GetSurface(IntPtr inst, uint windowId);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void RHIInstance_CreateLogicDevice(IntPtr inst, uint windowId);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
