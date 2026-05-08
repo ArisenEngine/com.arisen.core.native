@@ -235,6 +235,8 @@ namespace ArisenEngine::RHI
 
         void TransitionImageLayout(RHIImageHandle image, EImageLayout targetLayout);
         void TransitionImageLayout(RHIImageHandle image, EImageLayout oldLayout, EImageLayout targetLayout);
+        void TransitionImageLayout(RHIImageHandle image, EImageLayout oldLayout, EImageLayout targetLayout,
+                                   UInt32 srcQueueFamilyIndex, UInt32 dstQueueFamilyIndex);
 
         void CopyImage(RHIImageHandle src, EImageLayout srcLayout, RHIImageHandle dst, EImageLayout dstLayout,
                        UInt32 regionCount, const RHIImageCopy* pRegions);

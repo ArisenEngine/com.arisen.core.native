@@ -53,6 +53,9 @@ namespace Arisen.Native.RHI
         public static extern void RHICommandBuffer_TransitionImageLayoutExplicit(IntPtr cb, RHIImageHandle image, int oldLayout, int targetLayout);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void RHICommandBuffer_TransitionImageLayoutWithQueueFamily(IntPtr cb, RHIImageHandle image, int oldLayout, int targetLayout, uint srcQueueFamilyIndex, uint dstQueueFamilyIndex);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void RHICommandBuffer_BindDescriptorSets(IntPtr cb, int bindPoint, uint firstSet, RHIDescriptorPoolHandle poolHandle, uint poolId);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]

@@ -393,8 +393,17 @@ namespace ArisenEngine::RHI
     void RHICommandBuffer::TransitionImageLayout(RHIImageHandle image, EImageLayout oldLayout,
                                                  EImageLayout targetLayout)
     {
+        TransitionImageLayout(image, oldLayout, targetLayout,
+                              RHI_QUEUE_FAMILY_IGNORED, RHI_QUEUE_FAMILY_IGNORED);
+    }
+
+    void RHICommandBuffer::TransitionImageLayout(RHIImageHandle image, EImageLayout oldLayout,
+                                                 EImageLayout targetLayout,
+                                                 UInt32 srcQueueFamilyIndex, UInt32 dstQueueFamilyIndex)
+    {
         RecordCommand<RHICmdTransitionImageLayout>(ERHICommandType::TransitionImageLayout,
-                                                   {image, oldLayout, targetLayout});
+                                                   {image, oldLayout, targetLayout,
+                                                    srcQueueFamilyIndex, dstQueueFamilyIndex});
     }
 
     void RHICommandBuffer::CopyImage(RHIImageHandle src, EImageLayout srcLayout, RHIImageHandle dst,
@@ -764,7 +773,8 @@ namespace ArisenEngine::RHI
                     const auto* cmd = reinterpret_cast<const RHICmdTransitionImageLayout*>(m_CommandStream.data() +
                         offset);
                     offset += sizeof(RHICmdTransitionImageLayout);
-                    executor.TransitionImageLayout(cmd->image, cmd->oldLayout, cmd->targetLayout);
+                    executor.TransitionImageLayout(cmd->image, cmd->oldLayout, cmd->targetLayout,
+                                                   cmd->srcQueueFamilyIndex, cmd->dstQueueFamilyIndex);
                     break;
                 }
             case ERHICommandType::CopyImage:

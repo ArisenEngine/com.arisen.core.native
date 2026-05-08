@@ -358,6 +358,8 @@ namespace ArisenEngine::RHI
         RHIImageHandle image;
         EImageLayout oldLayout; // Can be Undefined if not provided
         EImageLayout targetLayout;
+        UInt32 srcQueueFamilyIndex; // VK_QUEUE_FAMILY_IGNORED for in-family transitions
+        UInt32 dstQueueFamilyIndex; // VK_QUEUE_FAMILY_EXTERNAL for cross-API release/acquire
     };
 
     struct RHICmdCopyImage

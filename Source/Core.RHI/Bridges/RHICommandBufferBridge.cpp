@@ -103,6 +103,15 @@ RHI_DLL void RHICommandBuffer_TransitionImageLayoutExplicit(RHICommandBuffer* cb
     cb->TransitionImageLayout(image, static_cast<EImageLayout>(oldLayout), static_cast<EImageLayout>(targetLayout));
 }
 
+RHI_DLL void RHICommandBuffer_TransitionImageLayoutWithQueueFamily(RHICommandBuffer* cb, RHIImageHandle image,
+                                                                    int oldLayout, int targetLayout,
+                                                                    uint32_t srcQueueFamilyIndex,
+                                                                    uint32_t dstQueueFamilyIndex)
+{
+    cb->TransitionImageLayout(image, static_cast<EImageLayout>(oldLayout), static_cast<EImageLayout>(targetLayout),
+                              srcQueueFamilyIndex, dstQueueFamilyIndex);
+}
+
 RHI_DLL void RHICommandBuffer_BindDescriptorSets(RHICommandBuffer* cb, int bindPoint, uint32_t firstSet,
                                                  RHIDescriptorPoolHandle poolHandle, uint32_t poolId)
 {

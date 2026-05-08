@@ -27,6 +27,7 @@ namespace ArisenEngine::RHI
         UInt32 surfaceTransformFlagBits;
         UInt32 compositeAlphaFlagBits;
         bool clipped;
+        bool bExportSharedWin32Handle;
         void* customData;
     };
 
