@@ -7,6 +7,12 @@
 
 namespace ArisenEngine::RHI
 {
+    // Mirrors VK_QUEUE_FAMILY_IGNORED (~0u). In-family / no ownership transfer.
+    static constexpr UInt32 RHI_QUEUE_FAMILY_IGNORED = 0xFFFFFFFFu;
+    // Mirrors VK_QUEUE_FAMILY_EXTERNAL_KHR (~0u - 2). Used when releasing/acquiring
+    // ownership of a shared image to/from an external API (e.g. D3D11 via Win32 NT handle).
+    static constexpr UInt32 RHI_QUEUE_FAMILY_EXTERNAL = 0xFFFFFFFDu;
+
     typedef struct RHIImageMemoryBarrier
     {
         EAccessFlag srcAccess;

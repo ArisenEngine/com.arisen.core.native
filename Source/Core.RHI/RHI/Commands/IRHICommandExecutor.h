@@ -63,6 +63,13 @@ namespace ArisenEngine::RHI
         virtual void PipelineBarrier(const RHICmdPipelineBarrier& cmd, const RHIMemoryBarrier* pMem,
                                      const RHIImageMemoryBarrier* pImg, const RHIBufferMemoryBarrier* pBuf) = 0;
         virtual void TransitionImageLayout(RHIImageHandle image, EImageLayout oldLayout, EImageLayout targetLayout) = 0;
+        virtual void TransitionImageLayout(RHIImageHandle image, EImageLayout oldLayout, EImageLayout targetLayout,
+                                           UInt32 srcQueueFamilyIndex, UInt32 dstQueueFamilyIndex)
+        {
+            // Default: ignore queue-family transfer for backends that don't need it.
+            (void)srcQueueFamilyIndex; (void)dstQueueFamilyIndex;
+            TransitionImageLayout(image, oldLayout, targetLayout);
+        }
         virtual void CopyImage(RHIImageHandle src, EImageLayout srcLayout, RHIImageHandle dst, EImageLayout dstLayout,
                                UInt32 regionCount, const RHIImageCopy* pRegions) = 0;
         virtual void GenerateMipmaps(RHIImageHandle image) = 0;
