@@ -12,7 +12,8 @@
     "provides": [
       {
         "interface": "ArisenKernel.Contracts.IRHIDevice",
-        "priority": 100
+        "priority": 100,
+        "deferred": true
       }
     ]
   },
