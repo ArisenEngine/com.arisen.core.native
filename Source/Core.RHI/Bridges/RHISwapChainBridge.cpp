@@ -42,7 +42,33 @@ RHI_DLL void* RHISwapChain_GetSharedWin32Handle(SwapChain* swapChain, uint32_t f
     if (!swapChain) return nullptr;
     return swapChain->GetSharedWin32Handle(frameIndex);
 }
+
+RHI_DLL uint64_t RHISwapChain_GetSharedMemorySize(SwapChain* swapChain, uint32_t frameIndex)
+{
+    if (!swapChain) return 0;
+    return swapChain->GetSharedMemorySize(frameIndex);
+}
+
+RHI_DLL void* RHISwapChain_GetRenderFinishedSemaphoreWin32Handle(SwapChain* swapChain, uint32_t frameIndex)
+{
+    if (!swapChain) return nullptr;
+    return swapChain->GetRenderFinishedSemaphoreWin32Handle(frameIndex);
+}
+
+RHI_DLL void* RHISwapChain_CreateConsumedSemaphoreWin32Handle(SwapChain* swapChain, uint32_t frameIndex)
+{
+    if (!swapChain) return nullptr;
+    return swapChain->CreateConsumedSemaphoreWin32Handle(frameIndex);
+}
+
+RHI_DLL void RHISwapChain_ReleaseConsumedSemaphoreWin32Handle(SwapChain* swapChain, void* handle)
+{
+    if (!swapChain) return;
+    swapChain->ReleaseConsumedSemaphoreWin32Handle(handle);
+}
+
 } // extern "C"
+
 
 RHI_DLL void RHISwapChain_SetResolution(RHISwapChain* sc, uint32_t width, uint32_t height)
 {
