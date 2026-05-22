@@ -1,0 +1,6 @@
+{
+  "entry": {
+    "assembly": "Com.Arisen.Core.Native.dll",
+    "class": "ArisenEngine.Core.Native.CoreNativePackage"
+  }
+}
