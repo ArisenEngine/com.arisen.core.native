@@ -53,6 +53,10 @@ namespace ArisenEngine::RHI
         virtual void SetResolution(UInt32 width, UInt32 height) = 0;
 
         virtual void* GetSharedWin32Handle(UInt32 index) { return nullptr; }
+        virtual UInt64 GetSharedMemorySize(UInt32 index) { return 0; }
+        virtual void* GetRenderFinishedSemaphoreWin32Handle(UInt32 frameIndex) { return nullptr; }
+        virtual void* CreateConsumedSemaphoreWin32Handle(UInt32 frameIndex) { return nullptr; }
+        virtual void ReleaseConsumedSemaphoreWin32Handle(void* handle) {}
 
     protected:
         virtual void RecreateSwapChainIfNeeded() = 0;

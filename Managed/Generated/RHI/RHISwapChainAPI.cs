@@ -23,6 +23,18 @@ namespace Arisen.Native.RHI
         public static extern IntPtr RHISwapChain_GetSharedWin32Handle(IntPtr swapChain, uint frameIndex);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern ulong RHISwapChain_GetSharedMemorySize(IntPtr swapChain, uint frameIndex);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr RHISwapChain_GetRenderFinishedSemaphoreWin32Handle(IntPtr swapChain, uint frameIndex);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr RHISwapChain_CreateConsumedSemaphoreWin32Handle(IntPtr swapChain, uint frameIndex);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void RHISwapChain_ReleaseConsumedSemaphoreWin32Handle(IntPtr swapChain, IntPtr handle);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void RHISwapChain_SetResolution(IntPtr sc, uint width, uint height);
 
     }
