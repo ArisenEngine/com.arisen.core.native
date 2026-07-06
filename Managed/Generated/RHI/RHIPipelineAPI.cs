@@ -29,6 +29,15 @@ namespace Arisen.Native.RHI
         public static extern void RHIPipelineState_SetInputAssemblyState(IntPtr pso, int topology, int primitiveRestart);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void RHIPipelineState_AddVertexBindingDescription(IntPtr pso, uint binding, uint stride, int inputRate);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void RHIPipelineState_AddVertexInputAttributeDescription(IntPtr pso, uint location, uint binding, int format, uint offset);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void RHIPipelineState_ClearVertexInputDescriptions(IntPtr pso);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void RHIPipelineState_SetRasterizationState(IntPtr pso, int polygonMode, int cullMode, int frontFace);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]

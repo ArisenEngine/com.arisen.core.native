@@ -51,6 +51,23 @@ RHI_DLL void RHIPipelineState_SetInputAssemblyState(RHIPipelineState* pso, int t
     pso->SetInputAssemblyState(state);
 }
 
+RHI_DLL void RHIPipelineState_AddVertexBindingDescription(RHIPipelineState* pso, uint32_t binding, uint32_t stride,
+                                                          int inputRate)
+{
+    pso->AddVertexBindingDescription(binding, stride, static_cast<EVertexInputRate>(inputRate));
+}
+
+RHI_DLL void RHIPipelineState_AddVertexInputAttributeDescription(RHIPipelineState* pso, uint32_t location,
+                                                                 uint32_t binding, int format, uint32_t offset)
+{
+    pso->AddVertexInputAttributeDescription(location, binding, static_cast<EFormat>(format), offset);
+}
+
+RHI_DLL void RHIPipelineState_ClearVertexInputDescriptions(RHIPipelineState* pso)
+{
+    pso->ClearVertexInputDescriptions();
+}
+
 RHI_DLL void RHIPipelineState_SetRasterizationState(RHIPipelineState* pso, int polygonMode, int cullMode, int frontFace)
 {
     RHIRasterizationState state{};

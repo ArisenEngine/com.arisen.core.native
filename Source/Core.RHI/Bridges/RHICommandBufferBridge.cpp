@@ -1,5 +1,6 @@
 #include "RHI/Commands/RHICommandBuffer.h"
 #include "Base/BindingMacros.h"
+#include "Containers/Containers.h"
 
 using namespace ArisenEngine::RHI;
 
@@ -128,6 +129,30 @@ RHI_DLL void RHICommandBuffer_CopyBuffer(RHICommandBuffer* cb, RHIBufferHandle s
                                          RHIBufferHandle dst, uint64_t dstOffset, uint64_t size)
 {
     cb->CopyBuffer(src, srcOffset, dst, dstOffset, size);
+}
+
+RHI_DLL void RHICommandBuffer_CopyBufferToImage2D(RHICommandBuffer* cb, RHIBufferHandle src, RHIImageHandle dst,
+                                                  int dstImageLayout, uint64_t bufferOffset,
+                                                  uint32_t width, uint32_t height)
+{
+    RHIBufferImageCopy region{};
+    region.bufferOffset = bufferOffset;
+    region.bufferRowLength = 0;
+    region.bufferImageHeight = 0;
+    region.imageSubresource.aspectMask = IMAGE_ASPECT_COLOR_BIT;
+    region.imageSubresource.mipLevel = 0;
+    region.imageSubresource.baseArrayLayer = 0;
+    region.imageSubresource.layerCount = 1;
+    region.offsetX = 0;
+    region.offsetY = 0;
+    region.offsetZ = 0;
+    region.width = width;
+    region.height = height;
+    region.depth = 1;
+
+    ArisenEngine::Containers::Vector<RHIBufferImageCopy> regions;
+    regions.emplace_back(region);
+    cb->CopyBufferToImage(src, dst, static_cast<EImageLayout>(dstImageLayout), std::move(regions));
 }
 
 RHI_DLL void RHICommandBuffer_BeginDebugLabel(RHICommandBuffer* cb, const char* label, const float color[4])
