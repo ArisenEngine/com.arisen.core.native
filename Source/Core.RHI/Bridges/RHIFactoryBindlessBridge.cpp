@@ -19,4 +19,19 @@ RHI_DLL uint32_t RHIFactory_RegisterBindlessResourceSampler(RHIFactory* f, uint3
 {
     return f->RegisterBindlessResource(MakeHandle<RHISamplerTag>(index, generation));
 }
+
+RHI_DLL void RHIFactory_UnregisterBindlessResourceImage(RHIFactory* f, uint32_t bindlessIndex)
+{
+    f->UnregisterBindlessResourceImage(bindlessIndex);
+}
+
+RHI_DLL void RHIFactory_UnregisterBindlessResourceBuffer(RHIFactory* f, uint32_t bindlessIndex)
+{
+    f->UnregisterBindlessResourceBuffer(bindlessIndex);
+}
+
+RHI_DLL void RHIFactory_UnregisterBindlessResourceSampler(RHIFactory* f, uint32_t bindlessIndex)
+{
+    f->UnregisterBindlessResourceSampler(bindlessIndex);
+}
 } // extern "C"

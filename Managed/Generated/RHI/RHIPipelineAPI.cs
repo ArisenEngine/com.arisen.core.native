@@ -44,6 +44,9 @@ namespace Arisen.Native.RHI
         public static extern void RHIPipelineState_SetColorBlendState(IntPtr pso, int blendEnable, int srcColor, int dstColor, int colorOp);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void RHIPipelineState_SetDepthStencilState(IntPtr pso, int depthTestEnable, int depthWriteEnable, int depthCompareOp);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void RHIPipelineState_SetDynamicStateMask(IntPtr pso, ulong mask);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]

@@ -8,10 +8,25 @@
 
 #pragma comment(lib, "Dbghelp.lib")
 
+namespace
+{
+    ArisenEngine::String FormatWin32Error(DWORD error)
+    {
+        if (error == 0)
+        {
+            return ArisenEngine::String("Win32Error=0");
+        }
+
+        return ArisenEngine::String::Format("Win32Error=%lu", error);
+    }
+}
+
 namespace ArisenEngine::RHI
 {
     void RHILoader::SetCurrentGraphicsAPI(GraphicsAPI api_type)
     {
+        _last_error = String();
+
         if (_rhi_dll != nullptr && _api_type == api_type)
         {
             return;
@@ -30,13 +45,18 @@ namespace ArisenEngine::RHI
             break;
 
         default:
-            LOG_FATAL("Unsupported graphics api.");
+            _last_error = String::Format("Unsupported graphics api: %d", static_cast<int>(api_type));
+            LOG_FATAL(_last_error);
             return;
         }
 
         if (!_rhi_dll)
         {
-            LOG_FATAL("Failed to load RHI dll.");
+            const DWORD error = ::GetLastError();
+            _last_error = String::Format(
+                "Failed to load RHI.Vulkan.dll (%s). Ensure the Vulkan native package payload was deployed and its dependent runtime DLLs are available.",
+                FormatWin32Error(error).GetString());
+            LOG_FATAL(_last_error);
             return;
         }
 
@@ -105,8 +125,9 @@ namespace ArisenEngine::RHI
     {
         if (_rhi_dll == nullptr)
         {
-            LOG_FATAL("RHI dll not loaded!");
-            throw std::exception("RHI dll not loaded!");
+            _last_error = "RHI dll not loaded. Call RHILoader::SetCurrentGraphicsAPI before creating an instance.";
+            LOG_FATAL(_last_error);
+            return nullptr;
         }
 
         typedef RHIInstance* (__fastcall*InstanceCreate)(RHIInstanceInfo&& app_info);
@@ -114,11 +135,40 @@ namespace ArisenEngine::RHI
 
         if (!createInstance)
         {
-            LOG_FATAL("Failed to find 'CreateInstance' in RHI dll.");
+            const DWORD error = ::GetLastError();
+            _last_error = String::Format(
+                "Failed to find 'CreateInstance' in RHI dll (%s). The native RHI payload may be stale or incompatible with Core.RHI.",
+                FormatWin32Error(error).GetString());
+            LOG_FATAL(_last_error);
             return nullptr;
         }
 
-        return createInstance(std::move(app_info));
+        try
+        {
+            auto* instance = createInstance(std::move(app_info));
+            if (instance == nullptr)
+            {
+                _last_error = "Native RHI CreateInstance returned null.";
+            }
+            else
+            {
+                _last_error = String();
+            }
+
+            return instance;
+        }
+        catch (const std::exception& e)
+        {
+            _last_error = String::Format("Native RHI CreateInstance failed: %s", e.what());
+            LOG_FATAL(_last_error);
+            return nullptr;
+        }
+        catch (...)
+        {
+            _last_error = "Native RHI CreateInstance failed with an unknown native exception.";
+            LOG_FATAL(_last_error);
+            return nullptr;
+        }
     }
 
     void RHILoader::Dispose()
@@ -131,5 +181,10 @@ namespace ArisenEngine::RHI
 
         HANDLE process = GetCurrentProcess();
         SymCleanup(process);
+    }
+
+    String RHILoader::GetLastErrorMessage()
+    {
+        return _last_error;
     }
 } // namespace ArisenEngine::RHI

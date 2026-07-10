@@ -64,5 +64,23 @@ namespace Arisen.Native.RHI
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern int RHIInstance_GetSuitablePresentMode(IntPtr inst, uint windowId);
 
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr RHIInstance_GetAdapterName(IntPtr inst);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr RHIInstance_GetAdapterTypeName(IntPtr inst);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr RHIInstance_GetAdapterDriverInfo(IntPtr inst);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr RHIInstance_GetEnabledInstanceExtensions(IntPtr inst);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr RHIInstance_GetEnabledDeviceExtensions(IntPtr inst);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr RHIInstance_GetMissingDeviceExtensions(IntPtr inst);
+
     }
 }

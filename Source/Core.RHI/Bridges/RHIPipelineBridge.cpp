@@ -98,6 +98,18 @@ RHI_DLL void RHIPipelineState_SetColorBlendState(RHIPipelineState* pso, int blen
     pso->SetColorBlendState(state);
 }
 
+RHI_DLL void RHIPipelineState_SetDepthStencilState(RHIPipelineState* pso, int depthTestEnable, int depthWriteEnable,
+                                                   int depthCompareOp)
+{
+    RHIDepthStencilState state{};
+    state.depthTestEnable = depthTestEnable != 0;
+    state.depthWriteEnable = depthWriteEnable != 0;
+    state.depthCompareOp = static_cast<ECompareOp>(depthCompareOp);
+    state.depthBoundsTestEnable = false;
+    state.stencilTestEnable = false;
+    pso->SetDepthStencilState(state);
+}
+
 RHI_DLL void RHIPipelineState_SetDynamicStateMask(RHIPipelineState* pso, uint64_t mask)
 {
     pso->SetDynamicStateMask(mask);
