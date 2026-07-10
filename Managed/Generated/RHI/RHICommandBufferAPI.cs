@@ -86,6 +86,9 @@ namespace Arisen.Native.RHI
         public static extern void RHICommandBuffer_BeginRendering(IntPtr cb, uint imgViewIdx, uint imgViewGen, int imageLayout, int loadOp, int storeOp, float clearR, float clearG, float clearB, float clearA, int x, int y, uint width, uint height);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void RHICommandBuffer_BeginRenderingWithDepth(IntPtr cb, uint imgViewIdx, uint imgViewGen, int imageLayout, int loadOp, int storeOp, float clearR, float clearG, float clearB, float clearA, uint depthViewIdx, uint depthViewGen, int depthLayout, int depthLoadOp, int depthStoreOp, float clearDepth, uint clearStencil, int x, int y, uint width, uint height);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void RHICommandBuffer_EndRendering(IntPtr cb);
 
     }

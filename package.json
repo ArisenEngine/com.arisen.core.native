@@ -17,7 +17,18 @@
       "Core.HAL.dll",
       "Core.RHI.dll",
       "Core.ShaderCompiler.dll",
-      "spdlog.dll",
+      {
+        "path": "spdlogd.dll",
+        "configurations": [
+          "Debug"
+        ]
+      },
+      {
+        "path": "spdlog.dll",
+        "configurations": [
+          "Release"
+        ]
+      },
       "TracyClient.dll",
       "3rdparty/dxc/bin/x64/dxcompiler.dll",
       "3rdparty/dxc/bin/x64/dxil.dll"

@@ -101,6 +101,48 @@ RHI_DLL int RHIInstance_GetSuitablePresentMode(RHIInstance* inst, uint32_t windo
 {
     return static_cast<int>(inst->GetSuitablePresentMode(windowId));
 }
+
+RHI_DLL const char* RHIInstance_GetAdapterName(RHIInstance* inst)
+{
+    static thread_local ArisenEngine::String value;
+    value = inst != nullptr ? inst->GetAdapterName() : ArisenEngine::String();
+    return value.c_str();
+}
+
+RHI_DLL const char* RHIInstance_GetAdapterTypeName(RHIInstance* inst)
+{
+    static thread_local ArisenEngine::String value;
+    value = inst != nullptr ? inst->GetAdapterTypeName() : ArisenEngine::String();
+    return value.c_str();
+}
+
+RHI_DLL const char* RHIInstance_GetAdapterDriverInfo(RHIInstance* inst)
+{
+    static thread_local ArisenEngine::String value;
+    value = inst != nullptr ? inst->GetAdapterDriverInfo() : ArisenEngine::String();
+    return value.c_str();
+}
+
+RHI_DLL const char* RHIInstance_GetEnabledInstanceExtensions(RHIInstance* inst)
+{
+    static thread_local ArisenEngine::String value;
+    value = inst != nullptr ? inst->GetEnabledInstanceExtensions() : ArisenEngine::String();
+    return value.c_str();
+}
+
+RHI_DLL const char* RHIInstance_GetEnabledDeviceExtensions(RHIInstance* inst)
+{
+    static thread_local ArisenEngine::String value;
+    value = inst != nullptr ? inst->GetEnabledDeviceExtensions() : ArisenEngine::String();
+    return value.c_str();
+}
+
+RHI_DLL const char* RHIInstance_GetMissingDeviceExtensions(RHIInstance* inst)
+{
+    static thread_local ArisenEngine::String value;
+    value = inst != nullptr ? inst->GetMissingDeviceExtensions() : ArisenEngine::String();
+    return value.c_str();
+}
 } // extern "C"
 
 ARISEN_BIND_END_BRIDGE()

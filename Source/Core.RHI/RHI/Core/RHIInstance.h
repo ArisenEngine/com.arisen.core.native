@@ -63,6 +63,12 @@ namespace ArisenEngine::RHI
         /// \brief used for DXC args
         /// \return api env value
         virtual String GetEnvString() const = 0;
+        virtual String GetAdapterName() const = 0;
+        virtual String GetAdapterTypeName() const = 0;
+        virtual String GetAdapterDriverInfo() const = 0;
+        virtual String GetEnabledInstanceExtensions() const = 0;
+        virtual String GetEnabledDeviceExtensions() const = 0;
+        virtual String GetMissingDeviceExtensions() const = 0;
 
         virtual void CreateSurface(UInt32 windowId, UInt32 width = 0, UInt32 height = 0) = 0;
         virtual void DestroySurface(UInt32 windowId) = 0;

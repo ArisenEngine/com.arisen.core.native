@@ -213,6 +213,48 @@ RHI_DLL void RHICommandBuffer_BeginRendering(RHICommandBuffer* cb,
     cb->BeginRendering(info);
 }
 
+RHI_DLL void RHICommandBuffer_BeginRenderingWithDepth(RHICommandBuffer* cb,
+    uint32_t imgViewIdx, uint32_t imgViewGen,
+    int imageLayout, int loadOp, int storeOp,
+    float clearR, float clearG, float clearB, float clearA,
+    uint32_t depthViewIdx, uint32_t depthViewGen,
+    int depthLayout, int depthLoadOp, int depthStoreOp,
+    float clearDepth, uint32_t clearStencil,
+    int32_t x, int32_t y, uint32_t width, uint32_t height)
+{
+    RHIRenderingAttachmentInfo colorAttachment{};
+    colorAttachment.imageView = { imgViewIdx, imgViewGen };
+    colorAttachment.imageLayout = static_cast<EImageLayout>(imageLayout);
+    colorAttachment.loadOp = static_cast<EAttachmentLoadOp>(loadOp);
+    colorAttachment.storeOp = static_cast<EAttachmentStoreOp>(storeOp);
+    colorAttachment.clearValue.float32[0] = clearR;
+    colorAttachment.clearValue.float32[1] = clearG;
+    colorAttachment.clearValue.float32[2] = clearB;
+    colorAttachment.clearValue.float32[3] = clearA;
+
+    RHIRenderingAttachmentInfo depthAttachment{};
+    depthAttachment.imageView = { depthViewIdx, depthViewGen };
+    depthAttachment.imageLayout = static_cast<EImageLayout>(depthLayout);
+    depthAttachment.loadOp = static_cast<EAttachmentLoadOp>(depthLoadOp);
+    depthAttachment.storeOp = static_cast<EAttachmentStoreOp>(depthStoreOp);
+    depthAttachment.clearValue.float32[0] = clearDepth;
+    depthAttachment.clearValue.uint32[1] = clearStencil;
+
+    RHIRenderingInfo info{};
+    info.pColorAttachments = &colorAttachment;
+    info.colorAttachmentCount = 1;
+    info.pResolveAttachments = nullptr;
+    info.pDepthAttachment = &depthAttachment;
+    info.pStencilAttachment = nullptr;
+    info.layerCount = 1;
+    info.RHIRenderArea.x = x;
+    info.RHIRenderArea.y = y;
+    info.RHIRenderArea.width = width;
+    info.RHIRenderArea.height = height;
+
+    cb->BeginRendering(info);
+}
+
 RHI_DLL void RHICommandBuffer_EndRendering(RHICommandBuffer* cb)
 {
     cb->EndRendering();

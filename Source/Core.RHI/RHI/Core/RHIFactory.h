@@ -103,5 +103,8 @@ namespace ArisenEngine::RHI
         virtual UInt32 RegisterBindlessResource(RHIImageViewHandle image) = 0;
         virtual UInt32 RegisterBindlessResource(RHIBufferHandle buffer) = 0;
         virtual UInt32 RegisterBindlessResource(RHISamplerHandle sampler) = 0;
+        virtual void UnregisterBindlessResourceImage(UInt32 bindlessIndex) = 0;
+        virtual void UnregisterBindlessResourceBuffer(UInt32 bindlessIndex) = 0;
+        virtual void UnregisterBindlessResourceSampler(UInt32 bindlessIndex) = 0;
     };
 }
