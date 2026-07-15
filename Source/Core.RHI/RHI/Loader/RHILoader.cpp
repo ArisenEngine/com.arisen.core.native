@@ -23,6 +23,18 @@ namespace
 
 namespace ArisenEngine::RHI
 {
+    void RHILoader::DestroyCurrentInstance() noexcept
+    {
+        if (_current_instance == nullptr)
+        {
+            return;
+        }
+
+        LOG_INFO("[RHILoader::DestroyCurrentInstance] Destroying active RHI instance.");
+        delete _current_instance;
+        _current_instance = nullptr;
+    }
+
     void RHILoader::SetCurrentGraphicsAPI(GraphicsAPI api_type)
     {
         _last_error = String();
@@ -34,8 +46,7 @@ namespace ArisenEngine::RHI
 
         if (_rhi_dll != nullptr)
         {
-            FreeLibrary((HMODULE)_rhi_dll);
-            _rhi_dll = nullptr;
+            Dispose();
         }
 
         switch (api_type)
@@ -72,7 +83,7 @@ namespace ArisenEngine::RHI
         HANDLE process = GetCurrentProcess();
 
         // Initialize symbol handler
-        if (!SymInitialize(process, nullptr, FALSE))
+        if (!_symbols_initialized && !SymInitialize(process, nullptr, FALSE))
         {
             DWORD error = GetLastError();
             if (error == ERROR_INVALID_FUNCTION)
@@ -84,40 +95,44 @@ namespace ArisenEngine::RHI
                 LOG_FATAL(String::Format("SymInitialize failed. Error code: %lu", error));
             }
         }
-        else
+        else if (!_symbols_initialized)
         {
+            _symbols_initialized = true;
             LOG_DEBUG("Symbols initialized successfully.");
         }
 
-        // Unload previous symbols for this module if they exist (to handle reloads)
-        DWORD64 moduleBase = (DWORD64)_rhi_dll;
-        SymUnloadModule64(process, moduleBase);
-
-        // Load symbols for the module
-        if (SymLoadModuleEx(
-            process,
-            nullptr,
-            dllPath,
-            nullptr,
-            moduleBase,
-            0,
-            nullptr,
-            0))
+        if (_symbols_initialized)
         {
-            LOG_INFO(String::Format("[RHILoader::SetCurrentGraphicsAPI] %s Symbols loaded.", dllPath));
-            SymRefreshModuleList(process);
+            // Unload previous symbols for this module if they exist (to handle reloads)
+            DWORD64 moduleBase = (DWORD64)_rhi_dll;
+            SymUnloadModule64(process, moduleBase);
 
-            IMAGEHLP_MODULE64 moduleInfo = {sizeof(IMAGEHLP_MODULE64)};
-            if (SymGetModuleInfo64(process, moduleBase, &moduleInfo))
+            // Load symbols for the module
+            if (SymLoadModuleEx(
+                process,
+                nullptr,
+                dllPath,
+                nullptr,
+                moduleBase,
+                0,
+                nullptr,
+                0))
             {
-                LOG_INFO(
-                    String::Format("Loaded symbols: %s, Loaded PDB Name: %s", moduleInfo.LoadedImageName, moduleInfo.
-                        LoadedPdbName));
+                LOG_INFO(String::Format("[RHILoader::SetCurrentGraphicsAPI] %s Symbols loaded.", dllPath));
+                SymRefreshModuleList(process);
+
+                IMAGEHLP_MODULE64 moduleInfo = {sizeof(IMAGEHLP_MODULE64)};
+                if (SymGetModuleInfo64(process, moduleBase, &moduleInfo))
+                {
+                    LOG_INFO(
+                        String::Format("Loaded symbols: %s, Loaded PDB Name: %s", moduleInfo.LoadedImageName, moduleInfo.
+                            LoadedPdbName));
+                }
             }
-        }
-        else
-        {
-            LOG_WARN(String::Format("Failed to load symbols for: %s. Error: %lu", dllPath, GetLastError()));
+            else
+            {
+                LOG_WARN(String::Format("Failed to load symbols for: %s. Error: %lu", dllPath, GetLastError()));
+            }
         }
     }
 
@@ -145,6 +160,8 @@ namespace ArisenEngine::RHI
 
         try
         {
+            DestroyCurrentInstance();
+
             auto* instance = createInstance(std::move(app_info));
             if (instance == nullptr)
             {
@@ -152,6 +169,7 @@ namespace ArisenEngine::RHI
             }
             else
             {
+                _current_instance = instance;
                 _last_error = String();
             }
 
@@ -173,14 +191,27 @@ namespace ArisenEngine::RHI
 
     void RHILoader::Dispose()
     {
+        DestroyCurrentInstance();
+
         if (_rhi_dll != nullptr)
         {
+            if (_symbols_initialized)
+            {
+                SymUnloadModule64(GetCurrentProcess(), (DWORD64)_rhi_dll);
+            }
+
             FreeLibrary((HMODULE)_rhi_dll);
             _rhi_dll = nullptr;
         }
 
-        HANDLE process = GetCurrentProcess();
-        SymCleanup(process);
+        if (_symbols_initialized)
+        {
+            HANDLE process = GetCurrentProcess();
+            SymCleanup(process);
+            _symbols_initialized = false;
+        }
+
+        _api_type = GraphicsAPI::None;
     }
 
     String RHILoader::GetLastErrorMessage()

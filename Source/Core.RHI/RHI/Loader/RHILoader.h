@@ -36,8 +36,12 @@ namespace ArisenEngine::RHI
 #ifndef ARISEN_AUTOBINDING
 
     private:
+        static void DestroyCurrentInstance() noexcept;
+
         static inline GraphicsAPI _api_type{GraphicsAPI::None};
         static inline void* _rhi_dll{nullptr}; // Using void* to avoid including Windows.h in public header
+        static inline RHIInstance* _current_instance{nullptr};
+        static inline bool _symbols_initialized{false};
         static inline String _last_error{};
 #endif
     };
