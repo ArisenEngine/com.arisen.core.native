@@ -31,8 +31,25 @@ namespace ArisenEngine::RHI
         }
 
         LOG_INFO("[RHILoader::DestroyCurrentInstance] Destroying active RHI instance.");
-        delete _current_instance;
+        auto* instance = _current_instance;
         _current_instance = nullptr;
+        delete instance;
+    }
+
+    void RHILoader::DestroyInstance(RHIInstance* instance) noexcept
+    {
+        if (instance == nullptr)
+        {
+            return;
+        }
+
+        if (instance != _current_instance)
+        {
+            LOG_WARN("[RHILoader::DestroyInstance] Ignoring a non-current RHI instance.");
+            return;
+        }
+
+        DestroyCurrentInstance();
     }
 
     void RHILoader::SetCurrentGraphicsAPI(GraphicsAPI api_type)
