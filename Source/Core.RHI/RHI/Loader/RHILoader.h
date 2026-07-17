@@ -19,9 +19,17 @@ namespace ArisenEngine::RHI
         static void SetCurrentGraphicsAPI(GraphicsAPI api_type);
 
         /**
-         * @brief Create an RHI instance using the currently loaded implementation.
+         * @brief Create a loader-owned RHI instance using the currently loaded implementation.
+         *
+         * The returned pointer is non-owning. Call DestroyInstance for scoped native
+         * use, or Dispose when unloading the backend.
          */
         static RHIInstance* CreateInstance(RHIInstanceInfo&& app_info);
+
+        /**
+         * @brief Destroy the matching active instance while keeping the backend loaded.
+         */
+        static void DestroyInstance(RHIInstance* instance) noexcept;
 
         /**
          * @brief Unload the RHI implementation and cleanup.
