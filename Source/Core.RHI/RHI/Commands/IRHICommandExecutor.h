@@ -60,6 +60,8 @@ namespace ArisenEngine::RHI
         virtual void PushConstants(UInt32 offset, UInt32 size, const void* data, UInt32 stageFlags) = 0;
         virtual void CopyBufferToImage(RHIBufferHandle srcBuffer, RHIImageHandle dst, EImageLayout dstImageLayout,
                                        UInt32 regionCount, const RHIBufferImageCopy* pRegions) = 0;
+        virtual void CopyImageToBuffer(RHIImageHandle src, EImageLayout srcImageLayout, RHIBufferHandle dstBuffer,
+                                       UInt32 regionCount, const RHIBufferImageCopy* pRegions) = 0;
         virtual void PipelineBarrier(const RHICmdPipelineBarrier& cmd, const RHIMemoryBarrier* pMem,
                                      const RHIImageMemoryBarrier* pImg, const RHIBufferMemoryBarrier* pBuf) = 0;
         virtual void TransitionImageLayout(RHIImageHandle image, EImageLayout oldLayout, EImageLayout targetLayout) = 0;
