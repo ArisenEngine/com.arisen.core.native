@@ -76,6 +76,7 @@ namespace ArisenEngine::RHI
         BindDescriptorSets,
         PushConstants,
         CopyBufferToImage,
+        CopyImageToBuffer,
         PipelineBarrier,
         TransitionImageLayout,
         CopyImage,
@@ -335,6 +336,15 @@ namespace ArisenEngine::RHI
         RHIBufferHandle srcBuffer;
         RHIImageHandle dst;
         EImageLayout dstImageLayout;
+        UInt32 regionCount;
+        // Followed by regionCount * RHIBufferImageCopy
+    };
+
+    struct RHICmdCopyImageToBuffer
+    {
+        RHIImageHandle src;
+        EImageLayout srcImageLayout;
+        RHIBufferHandle dstBuffer;
         UInt32 regionCount;
         // Followed by regionCount * RHIBufferImageCopy
     };

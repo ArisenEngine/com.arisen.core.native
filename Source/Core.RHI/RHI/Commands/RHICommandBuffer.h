@@ -222,6 +222,8 @@ namespace ArisenEngine::RHI
 
         void CopyBufferToImage(RHIBufferHandle srcBuffer, RHIImageHandle dst,
                                EImageLayout dstImageLayout, Containers::Vector<RHIBufferImageCopy>&& regions);
+        void CopyImageToBuffer(RHIImageHandle src, EImageLayout srcImageLayout, RHIBufferHandle dstBuffer,
+                               Containers::Vector<RHIBufferImageCopy>&& regions);
         void PipelineBarrier(EPipelineStageFlag srcStage, EPipelineStageFlag dstStage, UInt32 dependency,
                              const RHIMemoryBarrier* pMemoryBarriers, UInt32 memoryBarrierCount,
                              const RHIImageMemoryBarrier* pImageMemoryBarriers, UInt32 imageMemoryBarrierCount,

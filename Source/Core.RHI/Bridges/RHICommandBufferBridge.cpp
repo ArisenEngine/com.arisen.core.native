@@ -164,6 +164,30 @@ RHI_DLL void RHICommandBuffer_CopyBufferToImage2D(RHICommandBuffer* cb, RHIBuffe
         cb, src, dst, dstImageLayout, bufferOffset, 0, width, height);
 }
 
+RHI_DLL void RHICommandBuffer_CopyImageToBuffer2D(RHICommandBuffer* cb, RHIImageHandle src,
+                                                   int srcImageLayout, uint32_t srcImageAspect, RHIBufferHandle dst,
+                                                   uint64_t bufferOffset, uint32_t width, uint32_t height)
+{
+    RHIBufferImageCopy region{};
+    region.bufferOffset = bufferOffset;
+    region.bufferRowLength = 0;
+    region.bufferImageHeight = 0;
+    region.imageSubresource.aspectMask = static_cast<EImageAspectFlagBits>(srcImageAspect);
+    region.imageSubresource.mipLevel = 0;
+    region.imageSubresource.baseArrayLayer = 0;
+    region.imageSubresource.layerCount = 1;
+    region.offsetX = 0;
+    region.offsetY = 0;
+    region.offsetZ = 0;
+    region.width = width;
+    region.height = height;
+    region.depth = 1;
+
+    ArisenEngine::Containers::Vector<RHIBufferImageCopy> regions;
+    regions.emplace_back(region);
+    cb->CopyImageToBuffer(src, static_cast<EImageLayout>(srcImageLayout), dst, std::move(regions));
+}
+
 RHI_DLL void RHICommandBuffer_BeginDebugLabel(RHICommandBuffer* cb, const char* label, const float color[4])
 {
     cb->BeginDebugLabel(label, color);

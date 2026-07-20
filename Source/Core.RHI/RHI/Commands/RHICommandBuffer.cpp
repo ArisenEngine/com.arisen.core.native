@@ -321,6 +321,15 @@ namespace ArisenEngine::RHI
                                                regions.data(), regions.size() * sizeof(RHIBufferImageCopy));
     }
 
+    void RHICommandBuffer::CopyImageToBuffer(RHIImageHandle src, EImageLayout srcImageLayout,
+                                             RHIBufferHandle dstBuffer,
+                                             Containers::Vector<RHIBufferImageCopy>&& regions)
+    {
+        RecordCommand<RHICmdCopyImageToBuffer>(ERHICommandType::CopyImageToBuffer,
+                                               {src, srcImageLayout, dstBuffer, (UInt32)regions.size()},
+                                               regions.data(), regions.size() * sizeof(RHIBufferImageCopy));
+    }
+
     void RHICommandBuffer::PipelineBarrier(EPipelineStageFlag srcStage, EPipelineStageFlag dstStage, UInt32 dependency,
                                            const RHIMemoryBarrier* pMemoryBarriers, UInt32 memoryBarrierCount,
                                            const RHIImageMemoryBarrier* pImageMemoryBarriers,
@@ -752,6 +761,16 @@ namespace ArisenEngine::RHI
                     const auto* pRegions = reinterpret_cast<const RHIBufferImageCopy*>(m_CommandStream.data() + offset);
                     offset += cmd->regionCount * sizeof(RHIBufferImageCopy);
                     executor.CopyBufferToImage(cmd->srcBuffer, cmd->dst, cmd->dstImageLayout, cmd->regionCount,
+                                               pRegions);
+                    break;
+                }
+            case ERHICommandType::CopyImageToBuffer:
+                {
+                    const auto* cmd = reinterpret_cast<const RHICmdCopyImageToBuffer*>(m_CommandStream.data() + offset);
+                    offset += sizeof(RHICmdCopyImageToBuffer);
+                    const auto* pRegions = reinterpret_cast<const RHIBufferImageCopy*>(m_CommandStream.data() + offset);
+                    offset += cmd->regionCount * sizeof(RHIBufferImageCopy);
+                    executor.CopyImageToBuffer(cmd->src, cmd->srcImageLayout, cmd->dstBuffer, cmd->regionCount,
                                                pRegions);
                     break;
                 }
