@@ -41,6 +41,9 @@ namespace Arisen.Native.RHI
         public static extern void RHIPipelineState_SetRasterizationState(IntPtr pso, int polygonMode, int cullMode, int frontFace);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void RHIPipelineState_SetRasterizationStateWithDepthBias(IntPtr pso, int polygonMode, int cullMode, int frontFace, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void RHIPipelineState_SetColorBlendState(IntPtr pso, int blendEnable, int srcColor, int dstColor, int colorOp);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]

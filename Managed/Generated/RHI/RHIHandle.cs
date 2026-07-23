@@ -9,7 +9,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHIBufferHandle Invalid = new RHIBufferHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -18,7 +18,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHIImageHandle Invalid = new RHIImageHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -27,7 +27,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHIImageViewHandle Invalid = new RHIImageViewHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -36,7 +36,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHISamplerHandle Invalid = new RHISamplerHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -45,7 +45,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHIShaderHandle Invalid = new RHIShaderHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -54,7 +54,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHIPipelineHandle Invalid = new RHIPipelineHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -63,7 +63,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHICommandBufferHandle Invalid = new RHICommandBufferHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -72,7 +72,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHIDescriptorSetHandle Invalid = new RHIDescriptorSetHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -81,7 +81,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHISemaphoreHandle Invalid = new RHISemaphoreHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -90,7 +90,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHIRenderPassHandle Invalid = new RHIRenderPassHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -99,7 +99,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHIFrameBufferHandle Invalid = new RHIFrameBufferHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -108,7 +108,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHIShaderProgramHandle Invalid = new RHIShaderProgramHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -117,7 +117,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHICommandBufferPoolHandle Invalid = new RHICommandBufferPoolHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -126,7 +126,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHIAccelerationStructureHandle Invalid = new RHIAccelerationStructureHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -135,7 +135,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHIMemoryPoolHandle Invalid = new RHIMemoryPoolHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -144,7 +144,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHIDescriptorPoolHandle Invalid = new RHIDescriptorPoolHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 
@@ -153,7 +153,7 @@ namespace Arisen.Native.RHI
     {
         public uint Index;
         public uint Generation;
-        public bool IsValid => Index != 0xFFFFFFFFu;
+        public bool IsValid => Index != 0xFFFFFFFFu && Generation != 0;
         public static readonly RHIResourceHandle Invalid = new RHIResourceHandle { Index = 0xFFFFFFFF, Generation = 0 };
     }
 

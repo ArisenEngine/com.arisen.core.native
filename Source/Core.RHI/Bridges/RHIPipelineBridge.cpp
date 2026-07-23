@@ -81,6 +81,29 @@ RHI_DLL void RHIPipelineState_SetRasterizationState(RHIPipelineState* pso, int p
     pso->SetRasterizationState(state);
 }
 
+RHI_DLL void RHIPipelineState_SetRasterizationStateWithDepthBias(
+    RHIPipelineState* pso,
+    int polygonMode,
+    int cullMode,
+    int frontFace,
+    float depthBiasConstantFactor,
+    float depthBiasClamp,
+    float depthBiasSlopeFactor)
+{
+    RHIRasterizationState state{};
+    state.polygonMode = static_cast<EPolygonMode>(polygonMode);
+    state.cullMode = static_cast<ECullModeFlagBits>(cullMode);
+    state.frontFace = static_cast<EFrontFace>(frontFace);
+    state.depthClampEnable = false;
+    state.rasterizerDiscardEnable = false;
+    state.depthBiasEnable = true;
+    state.depthBiasConstantFactor = depthBiasConstantFactor;
+    state.depthBiasClamp = depthBiasClamp;
+    state.depthBiasSlopeFactor = depthBiasSlopeFactor;
+    state.lineWidth = 1.0f;
+    pso->SetRasterizationState(state);
+}
+
 RHI_DLL void RHIPipelineState_SetColorBlendState(RHIPipelineState* pso, int blendEnable, int srcColor, int dstColor,
                                                  int colorOp)
 {

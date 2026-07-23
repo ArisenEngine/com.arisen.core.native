@@ -20,7 +20,7 @@ namespace ArisenEngine
             UInt32 index{0xFFFFFFFFu};
             UInt32 generation{0};
 
-            bool IsValid() const { return index != 0xFFFFFFFFu; }
+            bool IsValid() const { return index != 0xFFFFFFFFu && generation != 0; }
 
             bool operator==(const RHIHandle& other) const
             {
