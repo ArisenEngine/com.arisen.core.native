@@ -30,6 +30,11 @@ RHI_DLL void RHISurface_SetResolution(RHISurface* surface, UInt32 width, UInt32 
     if (!surface) return;
     surface->SetResolution(width, height);
 }
+
+RHI_DLL bool RHISurface_TrySetResolution(RHISurface* surface, UInt32 width, UInt32 height)
+{
+    return surface && surface->TrySetResolution(width, height);
+}
 } // extern "C"
 
 ARISEN_BIND_END_BRIDGE()

@@ -19,6 +19,7 @@ namespace ArisenEngine::RHI
     {
         class RHISwapChain* WaitSwapChain = nullptr; // Optional: Waits for local frame's ImageAvailable
         class RHISwapChain* SignalSwapChain = nullptr; // Optional: Signals local frame's RenderFinished
+        UInt32 SwapChainFrameIndex = 0; // Surface-local output index, independent of device frame resources
 
         // Explicit semaphores (optional, for Async Compute / non-swapchain sync)
         RHISemaphoreHandle* pWaitSemaphores = nullptr;

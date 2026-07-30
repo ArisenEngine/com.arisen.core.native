@@ -9,6 +9,7 @@ namespace Arisen.Native.RHI
     {
         public IntPtr WaitSwapChain;
         public IntPtr SignalSwapChain;
+        public uint SwapChainFrameIndex;
         public IntPtr PWaitSemaphores;
         public uint WaitSemaphoreCount;
         public IntPtr PSignalSemaphores;

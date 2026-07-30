@@ -19,6 +19,13 @@
 
 #include "RHI/Sync/RHISemaphore.h"
 
+#include <atomic>
+
+namespace
+{
+    std::atomic<ArisenEngine::UInt64> g_NextPipelineStateIdentity{1};
+}
+
 namespace ArisenEngine::RHI
 {
     // RHIMemoryAllocator
@@ -45,7 +52,10 @@ namespace ArisenEngine::RHI
     }
 
     // RHIPipelineState
-    RHIPipelineState::RHIPipelineState() = default;
+    RHIPipelineState::RHIPipelineState() :
+        m_CacheIdentity(g_NextPipelineStateIdentity.fetch_add(1, std::memory_order_relaxed))
+    {
+    }
     RHIPipelineState::~RHIPipelineState() noexcept = default;
 
     // RHIShaderProgram

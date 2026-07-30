@@ -84,7 +84,8 @@ namespace ArisenEngine::RHI
         virtual void AddRayTracingShaderGroup(const RHIRayTracingShaderGroup& group) = 0;
         virtual void SetMaxRecursionDepth(UInt32 depth) = 0;
 
-        virtual const UInt32 GetHash() const = 0;
+        // Process-unique identity prevents cache aliasing when allocator addresses are reused.
+        UInt64 GetCacheIdentity() const { return m_CacheIdentity; }
 
     public:
         // Structured State Setters
@@ -113,6 +114,7 @@ namespace ArisenEngine::RHI
                                          EFormat stencilFormat) = 0;
 
     private:
+        UInt64 m_CacheIdentity;
         RHIInputAssemblyState m_InputAssemblyState;
         RHIRasterizationState m_RasterizationState;
         RHIMultisampleState m_MultisampleState;

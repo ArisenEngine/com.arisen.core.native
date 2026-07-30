@@ -18,6 +18,11 @@ namespace ArisenEngine::RHI
 
         virtual RHISwapChain* GetSwapChain() = 0;
         virtual void SetResolution(UInt32 width, UInt32 height) = 0;
+        virtual bool TrySetResolution(UInt32 width, UInt32 height)
+        {
+            SetResolution(width, height);
+            return true;
+        }
 
     protected:
         UInt32 m_RenderWindowId;

@@ -19,5 +19,8 @@ namespace Arisen.Native.RHI
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void RHISurface_SetResolution(IntPtr surface, uint width, uint height);
 
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool RHISurface_TrySetResolution(IntPtr surface, uint width, uint height);
+
     }
 }
