@@ -17,6 +17,9 @@ namespace Arisen.Native.RHI
         public static extern IntPtr RHIPipelineCache_GetComputePipeline(IntPtr cache, IntPtr pso);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void RHIPipelineCache_ReleasePipeline(IntPtr cache, uint index, uint generation);
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr RHIPipelineCache_GetPipelineState(IntPtr cache);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]

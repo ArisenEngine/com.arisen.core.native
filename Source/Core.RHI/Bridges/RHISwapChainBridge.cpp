@@ -61,10 +61,21 @@ RHI_DLL void* RHISwapChain_CreateConsumedSemaphoreWin32Handle(SwapChain* swapCha
     return swapChain->CreateConsumedSemaphoreWin32Handle(frameIndex);
 }
 
+RHI_DLL void RHISwapChain_CompleteConsumedSemaphoreWin32Handle(SwapChain* swapChain, void* handle)
+{
+    if (!swapChain) return;
+    swapChain->CompleteConsumedSemaphoreWin32Handle(handle);
+}
+
 RHI_DLL void RHISwapChain_ReleaseConsumedSemaphoreWin32Handle(SwapChain* swapChain, void* handle)
 {
     if (!swapChain) return;
     swapChain->ReleaseConsumedSemaphoreWin32Handle(handle);
+}
+
+RHI_DLL bool RHISwapChain_AcknowledgeExternalConsumerRelease(SwapChain* swapChain)
+{
+    return swapChain && swapChain->AcknowledgeExternalConsumerRelease();
 }
 
 } // extern "C"

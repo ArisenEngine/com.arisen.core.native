@@ -19,6 +19,7 @@ struct RHISubmitDescriptor_Bridge
 {
     RHISwapChain* waitSwapChain = nullptr;
     RHISwapChain* signalSwapChain = nullptr;
+    uint32_t swapChainFrameIndex = 0;
     const uint64_t* pWaitSemaphores = nullptr;
     uint32_t waitSemaphoreCount = 0;
     const uint64_t* pSignalSemaphores = nullptr;
@@ -84,7 +85,10 @@ RHI_DLL void* RHIDevice_GetCommandBufferPool(RHIDevice* dev, uint32_t index, uin
 RHI_DLL uint64_t RHIDevice_GetCompletedSubmitTicket(RHIDevice* dev)
 {
     auto* queue = dev->GetQueue(RHIQueueType::Graphics);
-    return queue ? queue->GetCompletedTicket() : 0;
+    if (!queue) return 0;
+
+    queue->Update();
+    return queue->GetCompletedTicket();
 }
 
 RHI_DLL void RHIDevice_WaitQueueTicket(RHIDevice* dev, uint64_t ticket)
@@ -108,6 +112,7 @@ RHI_DLL uint64_t RHIDevice_Submit(RHIDevice* dev, uint32_t index, uint32_t gener
         RHISubmitDescriptor desc;
         desc.WaitSwapChain = bridgeDesc->waitSwapChain;
         desc.SignalSwapChain = bridgeDesc->signalSwapChain;
+        desc.SwapChainFrameIndex = bridgeDesc->swapChainFrameIndex;
         return queue->Submit(handle, &desc);
     }
 

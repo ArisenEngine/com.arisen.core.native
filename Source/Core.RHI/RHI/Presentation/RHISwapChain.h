@@ -51,12 +51,19 @@ namespace ArisenEngine::RHI
         virtual void Cleanup() = 0;
         virtual void Present(UInt32 frameIndex) = 0;
         virtual void SetResolution(UInt32 width, UInt32 height) = 0;
+        virtual bool TrySetResolution(UInt32 width, UInt32 height)
+        {
+            SetResolution(width, height);
+            return true;
+        }
 
         virtual void* GetSharedWin32Handle(UInt32 index) { return nullptr; }
         virtual UInt64 GetSharedMemorySize(UInt32 index) { return 0; }
         virtual void* GetRenderFinishedSemaphoreWin32Handle(UInt32 frameIndex) { return nullptr; }
         virtual void* CreateConsumedSemaphoreWin32Handle(UInt32 frameIndex) { return nullptr; }
+        virtual void CompleteConsumedSemaphoreWin32Handle(void* handle) {}
         virtual void ReleaseConsumedSemaphoreWin32Handle(void* handle) {}
+        virtual bool AcknowledgeExternalConsumerRelease() { return true; }
 
     protected:
         virtual void RecreateSwapChainIfNeeded() = 0;

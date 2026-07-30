@@ -25,6 +25,15 @@ RHI_DLL void* RHIPipelineCache_GetComputePipeline(RHIPipelineCache* cache, RHIPi
     return (void*)result;
 }
 
+RHI_DLL void RHIPipelineCache_ReleasePipeline(
+    RHIPipelineCache* cache,
+    uint32_t index,
+    uint32_t generation)
+{
+    if (!cache) return;
+    cache->ReleasePipeline(RHIPipelineHandle{index, generation});
+}
+
 RHI_DLL void* RHIPipelineCache_GetPipelineState(RHIPipelineCache* cache)
 {
     return cache->GetPipelineState().release();
