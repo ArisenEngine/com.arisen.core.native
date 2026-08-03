@@ -10,62 +10,179 @@ namespace Arisen.Native.RHI
     {
         private const string DllName = "Core.RHI.dll";
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIPipelineCache_GetGraphicsPipeline(IntPtr cache, IntPtr pso);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineCache_GetGraphicsPipeline", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIPipelineCache_GetGraphicsPipeline(IntPtr cache, IntPtr pso);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIPipelineCache_GetComputePipeline(IntPtr cache, IntPtr pso);
+        public static IntPtr RHIPipelineCache_GetGraphicsPipeline(IntPtr cache, IntPtr pso)
+        {
+            IntPtr result = Native_RHIPipelineCache_GetGraphicsPipeline(cache, pso);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineCache_GetGraphicsPipeline));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineCache_ReleasePipeline(IntPtr cache, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineCache_GetComputePipeline", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIPipelineCache_GetComputePipeline(IntPtr cache, IntPtr pso);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIPipelineCache_GetPipelineState(IntPtr cache);
+        public static IntPtr RHIPipelineCache_GetComputePipeline(IntPtr cache, IntPtr pso)
+        {
+            IntPtr result = Native_RHIPipelineCache_GetComputePipeline(cache, pso);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineCache_GetComputePipeline));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_AddProgram(IntPtr pso, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineCache_ReleasePipeline", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineCache_ReleasePipeline(IntPtr cache, uint index, uint generation);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_SetBindPoint(IntPtr pso, int bindPoint);
+        public static void RHIPipelineCache_ReleasePipeline(IntPtr cache, uint index, uint generation)
+        {
+            Native_RHIPipelineCache_ReleasePipeline(cache, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineCache_ReleasePipeline));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_SetInputAssemblyState(IntPtr pso, int topology, int primitiveRestart);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineCache_GetPipelineState", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIPipelineCache_GetPipelineState(IntPtr cache);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_AddVertexBindingDescription(IntPtr pso, uint binding, uint stride, int inputRate);
+        public static IntPtr RHIPipelineCache_GetPipelineState(IntPtr cache)
+        {
+            IntPtr result = Native_RHIPipelineCache_GetPipelineState(cache);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineCache_GetPipelineState));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_AddVertexInputAttributeDescription(IntPtr pso, uint location, uint binding, int format, uint offset);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_AddProgram", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_AddProgram(IntPtr pso, uint index, uint generation);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_ClearVertexInputDescriptions(IntPtr pso);
+        public static void RHIPipelineState_AddProgram(IntPtr pso, uint index, uint generation)
+        {
+            Native_RHIPipelineState_AddProgram(pso, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_AddProgram));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_SetRasterizationState(IntPtr pso, int polygonMode, int cullMode, int frontFace);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_SetBindPoint", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_SetBindPoint(IntPtr pso, int bindPoint);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_SetRasterizationStateWithDepthBias(IntPtr pso, int polygonMode, int cullMode, int frontFace, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor);
+        public static void RHIPipelineState_SetBindPoint(IntPtr pso, int bindPoint)
+        {
+            Native_RHIPipelineState_SetBindPoint(pso, bindPoint);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_SetBindPoint));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_SetColorBlendState(IntPtr pso, int blendEnable, int srcColor, int dstColor, int colorOp);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_SetInputAssemblyState", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_SetInputAssemblyState(IntPtr pso, int topology, int primitiveRestart);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_SetDepthStencilState(IntPtr pso, int depthTestEnable, int depthWriteEnable, int depthCompareOp);
+        public static void RHIPipelineState_SetInputAssemblyState(IntPtr pso, int topology, int primitiveRestart)
+        {
+            Native_RHIPipelineState_SetInputAssemblyState(pso, topology, primitiveRestart);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_SetInputAssemblyState));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_SetDynamicStateMask(IntPtr pso, ulong mask);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_AddVertexBindingDescription", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_AddVertexBindingDescription(IntPtr pso, uint binding, uint stride, int inputRate);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_SetRenderingFormats(IntPtr pso, IntPtr colorFormats, uint colorCount, int depthFormat);
+        public static void RHIPipelineState_AddVertexBindingDescription(IntPtr pso, uint binding, uint stride, int inputRate)
+        {
+            Native_RHIPipelineState_AddVertexBindingDescription(pso, binding, stride, inputRate);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_AddVertexBindingDescription));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_UpdateDescriptorSetBuffer(IntPtr pso, uint layoutIndex, uint binding, IntPtr indices, IntPtr generations, uint count);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_AddVertexInputAttributeDescription", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_AddVertexInputAttributeDescription(IntPtr pso, uint location, uint binding, int format, uint offset);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_BuildDescriptorSetLayout(IntPtr pso);
+        public static void RHIPipelineState_AddVertexInputAttributeDescription(IntPtr pso, uint location, uint binding, int format, uint offset)
+        {
+            Native_RHIPipelineState_AddVertexInputAttributeDescription(pso, location, binding, format, offset);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_AddVertexInputAttributeDescription));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIPipelineState_Delete(IntPtr pso);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_ClearVertexInputDescriptions", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_ClearVertexInputDescriptions(IntPtr pso);
+
+        public static void RHIPipelineState_ClearVertexInputDescriptions(IntPtr pso)
+        {
+            Native_RHIPipelineState_ClearVertexInputDescriptions(pso);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_ClearVertexInputDescriptions));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_SetRasterizationState", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_SetRasterizationState(IntPtr pso, int polygonMode, int cullMode, int frontFace);
+
+        public static void RHIPipelineState_SetRasterizationState(IntPtr pso, int polygonMode, int cullMode, int frontFace)
+        {
+            Native_RHIPipelineState_SetRasterizationState(pso, polygonMode, cullMode, frontFace);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_SetRasterizationState));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_SetRasterizationStateWithDepthBias", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_SetRasterizationStateWithDepthBias(IntPtr pso, int polygonMode, int cullMode, int frontFace, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor);
+
+        public static void RHIPipelineState_SetRasterizationStateWithDepthBias(IntPtr pso, int polygonMode, int cullMode, int frontFace, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor)
+        {
+            Native_RHIPipelineState_SetRasterizationStateWithDepthBias(pso, polygonMode, cullMode, frontFace, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_SetRasterizationStateWithDepthBias));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_SetColorBlendState", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_SetColorBlendState(IntPtr pso, int blendEnable, int srcColor, int dstColor, int colorOp);
+
+        public static void RHIPipelineState_SetColorBlendState(IntPtr pso, int blendEnable, int srcColor, int dstColor, int colorOp)
+        {
+            Native_RHIPipelineState_SetColorBlendState(pso, blendEnable, srcColor, dstColor, colorOp);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_SetColorBlendState));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_SetDepthStencilState", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_SetDepthStencilState(IntPtr pso, int depthTestEnable, int depthWriteEnable, int depthCompareOp);
+
+        public static void RHIPipelineState_SetDepthStencilState(IntPtr pso, int depthTestEnable, int depthWriteEnable, int depthCompareOp)
+        {
+            Native_RHIPipelineState_SetDepthStencilState(pso, depthTestEnable, depthWriteEnable, depthCompareOp);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_SetDepthStencilState));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_SetDynamicStateMask", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_SetDynamicStateMask(IntPtr pso, ulong mask);
+
+        public static void RHIPipelineState_SetDynamicStateMask(IntPtr pso, ulong mask)
+        {
+            Native_RHIPipelineState_SetDynamicStateMask(pso, mask);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_SetDynamicStateMask));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_SetRenderingFormats", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_SetRenderingFormats(IntPtr pso, IntPtr colorFormats, uint colorCount, int depthFormat);
+
+        public static void RHIPipelineState_SetRenderingFormats(IntPtr pso, IntPtr colorFormats, uint colorCount, int depthFormat)
+        {
+            Native_RHIPipelineState_SetRenderingFormats(pso, colorFormats, colorCount, depthFormat);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_SetRenderingFormats));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_UpdateDescriptorSetBuffer", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_UpdateDescriptorSetBuffer(IntPtr pso, uint layoutIndex, uint binding, IntPtr indices, IntPtr generations, uint count);
+
+        public static void RHIPipelineState_UpdateDescriptorSetBuffer(IntPtr pso, uint layoutIndex, uint binding, IntPtr indices, IntPtr generations, uint count)
+        {
+            Native_RHIPipelineState_UpdateDescriptorSetBuffer(pso, layoutIndex, binding, indices, generations, count);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_UpdateDescriptorSetBuffer));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_BuildDescriptorSetLayout", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_BuildDescriptorSetLayout(IntPtr pso);
+
+        public static void RHIPipelineState_BuildDescriptorSetLayout(IntPtr pso)
+        {
+            Native_RHIPipelineState_BuildDescriptorSetLayout(pso);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_BuildDescriptorSetLayout));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIPipelineState_Delete", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIPipelineState_Delete(IntPtr pso);
+
+        public static void RHIPipelineState_Delete(IntPtr pso)
+        {
+            Native_RHIPipelineState_Delete(pso);
+            RHIInterop.ThrowIfFailed(nameof(RHIPipelineState_Delete));
+        }
 
     }
 }

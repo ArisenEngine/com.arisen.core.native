@@ -47,16 +47,30 @@ namespace ArisenEngine::RHI
     }
 
     // RHIPipelineCache
-    RHIPipelineCache::RHIPipelineCache(UInt32 maxFramesInFlight) : m_MaxFramesInFlight(maxFramesInFlight)
+    RHIPipelineCache::RHIPipelineCache(RHIDevice* device, UInt32 maxFramesInFlight) :
+        m_Device(device), m_MaxFramesInFlight(maxFramesInFlight)
     {
     }
 
     // RHIPipelineState
-    RHIPipelineState::RHIPipelineState() :
+    RHIPipelineState::RHIPipelineState(RHIDevice* device) :
+        m_Device(device),
         m_CacheIdentity(g_NextPipelineStateIdentity.fetch_add(1, std::memory_order_relaxed))
     {
     }
     RHIPipelineState::~RHIPipelineState() noexcept = default;
+
+    bool RHIPipelineState::IsAlive(RHIShaderProgramHandle handle) const
+    {
+        auto* factory = m_Device ? m_Device->GetFactory() : nullptr;
+        return factory && factory->IsAlive(handle);
+    }
+
+    bool RHIPipelineState::IsAlive(RHIBufferHandle handle) const
+    {
+        auto* factory = m_Device ? m_Device->GetFactory() : nullptr;
+        return factory && factory->IsAlive(handle);
+    }
 
     // RHIShaderProgram
     RHIShaderProgram::RHIShaderProgram() = default;
@@ -108,7 +122,9 @@ namespace ArisenEngine::RHI
     const String& RHIShaderProgram::GetName() const { return m_Name; }
 
     // RHIDescriptorPool
-    RHIDescriptorPool::RHIDescriptorPool() = default;
+    RHIDescriptorPool::RHIDescriptorPool(RHIDevice* device) : m_Device(device)
+    {
+    }
 
     // RHIDescriptorSet
     RHIDescriptorSet::RHIDescriptorSet(RHIDescriptorPool* descriptorPool, UInt32 layoutIndex) :

@@ -2,6 +2,7 @@
 #include "Base/FoundationMinimal.h"
 #include "RHI/Handles/RHIHandle.h"
 #include "RHI/Definitions/CoreRHICommon.h"
+#include "RHI/Resources/RHIDeferredDeletionQueue.h"
 #include "RHI/Enums/Image/EFormat.h"
 #include "RHI/Enums/Image/EColorSpace.h"
 #include "RHI/Enums/Image/EImageUsageFlagBits.h"
@@ -11,6 +12,15 @@
 
 namespace ArisenEngine::RHI
 {
+    enum class RHISwapChainFrameState : UInt8
+    {
+        Idle,
+        Acquired,
+        Submitted,
+        Presented,
+        Retired
+    };
+
     struct RHISwapChainDescriptor
     {
         UInt32 width;
@@ -42,6 +52,7 @@ namespace ArisenEngine::RHI
         virtual void CreateSwapChainWithDesc(RHISwapChainDescriptor desc) = 0;
         virtual RHIImageHandle BeginFrame(UInt32 frameIndex) = 0;
         virtual void EndFrame(UInt32 frameIndex) = 0;
+        virtual RHIGpuTicket RetireFrame(UInt32 frameIndex) = 0;
 
         virtual RHISemaphoreHandle GetImageAvailableSemaphore(UInt32 frameIndex) const = 0;
         virtual RHISemaphoreHandle GetRenderFinishSemaphore(UInt32 frameIndex) const = 0;
@@ -64,6 +75,7 @@ namespace ArisenEngine::RHI
         virtual void CompleteConsumedSemaphoreWin32Handle(void* handle) {}
         virtual void ReleaseConsumedSemaphoreWin32Handle(void* handle) {}
         virtual bool AcknowledgeExternalConsumerRelease() { return true; }
+        UInt32 GetMaxFramesInFlight() const { return m_MaxFramesInFlight; }
 
     protected:
         virtual void RecreateSwapChainIfNeeded() = 0;

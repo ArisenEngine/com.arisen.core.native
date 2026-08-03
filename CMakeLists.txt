@@ -58,9 +58,13 @@ else()
     message(FATAL_ERROR "spdlog not found in 3rdparty! Package is incomplete.")
 endif()
 
-# Add local tracy
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/tracy/CMakeLists.txt")
-    option(TRACY_ENABLE "Enable Tracy" ON)
+# Add local Tracy only when the selected profile owns profiler instrumentation.
+if(ARISEN_PROFILER_ENABLED)
+    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/tracy/CMakeLists.txt")
+        message(FATAL_ERROR "Tracy source is required by this profiler-enabled build.")
+    endif()
+
+    set(TRACY_ENABLE ON CACHE BOOL "Enable Tracy" FORCE)
     set(TRACY_STATIC OFF CACHE BOOL "" FORCE)
     set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
     add_subdirectory(3rdparty/tracy)

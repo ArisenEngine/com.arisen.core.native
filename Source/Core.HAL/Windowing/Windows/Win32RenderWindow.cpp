@@ -48,8 +48,15 @@ namespace ArisenEngine::HAL
 
     void RemoveRenderSurface(UInt32 id)
     {
-        ASSERT(renderWindows.contains(id));
-        RemoveWindow(renderWindows[id].window.ID());
+        const auto it = renderWindows.find(id);
+        if (it == renderWindows.end())
+        {
+            LOG_ERRORF("[Win32RenderWindow]: Cannot remove unknown render surface {0}.", id);
+            return;
+        }
+
+        RemoveWindow(it->second.window.ID());
+        renderWindows.erase(it);
     }
 
     void ResizeRenderSurface(UInt32 id, UInt32 width, UInt32 height)

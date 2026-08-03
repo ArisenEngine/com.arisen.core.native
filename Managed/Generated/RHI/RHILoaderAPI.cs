@@ -10,14 +10,33 @@ namespace Arisen.Native.RHI
     {
         private const string DllName = "Core.RHI.dll";
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHILoader_SetCurrentGraphicsAPI(int apiType);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHILoader_SetCurrentGraphicsAPI", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHILoader_SetCurrentGraphicsAPI(int apiType);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHILoader_CreateInstance([MarshalAs(UnmanagedType.LPUTF8Str)] string name, [MarshalAs(UnmanagedType.LPUTF8Str)] string engineName, int validationLayer, uint variant, uint major_ver, uint minor_ver, uint patch, uint appMajor, uint appMinor, uint appPatch, uint engineMajor, uint engineMinor, uint enginePatch, uint maxFramesInFlight);
+        public static void RHILoader_SetCurrentGraphicsAPI(int apiType)
+        {
+            Native_RHILoader_SetCurrentGraphicsAPI(apiType);
+            RHIInterop.ThrowIfFailed(nameof(RHILoader_SetCurrentGraphicsAPI));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHILoader_Dispose();
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHILoader_CreateInstance", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHILoader_CreateInstance([MarshalAs(UnmanagedType.LPUTF8Str)] string name, [MarshalAs(UnmanagedType.LPUTF8Str)] string engineName, int validationLayer, uint variant, uint major_ver, uint minor_ver, uint patch, uint appMajor, uint appMinor, uint appPatch, uint engineMajor, uint engineMinor, uint enginePatch, uint maxFramesInFlight);
+
+        public static IntPtr RHILoader_CreateInstance([MarshalAs(UnmanagedType.LPUTF8Str)] string name, [MarshalAs(UnmanagedType.LPUTF8Str)] string engineName, int validationLayer, uint variant, uint major_ver, uint minor_ver, uint patch, uint appMajor, uint appMinor, uint appPatch, uint engineMajor, uint engineMinor, uint enginePatch, uint maxFramesInFlight)
+        {
+            IntPtr result = Native_RHILoader_CreateInstance(name, engineName, validationLayer, variant, major_ver, minor_ver, patch, appMajor, appMinor, appPatch, engineMajor, engineMinor, enginePatch, maxFramesInFlight);
+            RHIInterop.ThrowIfFailed(nameof(RHILoader_CreateInstance));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHILoader_Dispose", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHILoader_Dispose();
+
+        public static void RHILoader_Dispose()
+        {
+            Native_RHILoader_Dispose();
+            RHIInterop.ThrowIfFailed(nameof(RHILoader_Dispose));
+        }
 
     }
 }

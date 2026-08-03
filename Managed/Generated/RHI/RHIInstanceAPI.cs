@@ -10,77 +10,238 @@ namespace Arisen.Native.RHI
     {
         private const string DllName = "Core.RHI.dll";
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIInstance_PickPhysicalDevice(IntPtr inst, int considerSurface);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_PickPhysicalDevice", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIInstance_PickPhysicalDevice(IntPtr inst, int considerSurface);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIInstance_InitLogicDevices(IntPtr inst);
+        public static void RHIInstance_PickPhysicalDevice(IntPtr inst, int considerSurface)
+        {
+            Native_RHIInstance_PickPhysicalDevice(inst, considerSurface);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_PickPhysicalDevice));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIInstance_CreateSurface(IntPtr inst, uint windowId, uint width, uint height);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_InitLogicDevices", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIInstance_InitLogicDevices(IntPtr inst);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIInstance_DestroySurface(IntPtr inst, uint windowId);
+        public static void RHIInstance_InitLogicDevices(IntPtr inst)
+        {
+            Native_RHIInstance_InitLogicDevices(inst);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_InitLogicDevices));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIInstance_SetResolution(IntPtr inst, uint windowId, uint width, uint height);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_CreateSurface", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIInstance_CreateSurface(IntPtr inst, uint windowId, uint width, uint height);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIInstance_GetLogicalDevice(IntPtr inst, uint windowId);
+        public static void RHIInstance_CreateSurface(IntPtr inst, uint windowId, uint width, uint height)
+        {
+            Native_RHIInstance_CreateSurface(inst, windowId, width, height);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_CreateSurface));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIInstance_GetSurface(IntPtr inst, uint windowId);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_DestroySurface", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIInstance_DestroySurface(IntPtr inst, uint windowId);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIInstance_CreateLogicDevice(IntPtr inst, uint windowId);
+        public static void RHIInstance_DestroySurface(IntPtr inst, uint windowId)
+        {
+            Native_RHIInstance_DestroySurface(inst, windowId);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_DestroySurface));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int RHIInstance_IsPhysicalDeviceAvailable(IntPtr inst);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_SetResolution", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIInstance_SetResolution(IntPtr inst, uint windowId, uint width, uint height);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int RHIInstance_IsSurfacesAvailable(IntPtr inst);
+        public static void RHIInstance_SetResolution(IntPtr inst, uint windowId, uint width, uint height)
+        {
+            Native_RHIInstance_SetResolution(inst, windowId, width, height);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_SetResolution));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint RHIInstance_GetMaxFramesInFlight(IntPtr inst);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_GetLogicalDevice", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIInstance_GetLogicalDevice(IntPtr inst, uint windowId);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int RHIInstance_IsEnableValidation(IntPtr inst);
+        public static IntPtr RHIInstance_GetLogicalDevice(IntPtr inst, uint windowId)
+        {
+            IntPtr result = Native_RHIInstance_GetLogicalDevice(inst, windowId);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_GetLogicalDevice));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint RHIInstance_GetExternalIndex(IntPtr inst);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_GetSurface", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIInstance_GetSurface(IntPtr inst, uint windowId);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int RHIInstance_IsSupportLinearColorSpace(IntPtr inst, uint windowId);
+        public static IntPtr RHIInstance_GetSurface(IntPtr inst, uint windowId)
+        {
+            IntPtr result = Native_RHIInstance_GetSurface(inst, windowId);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_GetSurface));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int RHIInstance_PresentModeSupported(IntPtr inst, uint windowId, int mode);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_CreateLogicDevice", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIInstance_CreateLogicDevice(IntPtr inst, uint windowId);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIInstance_SetCurrentPresentMode(IntPtr inst, uint windowId, int mode);
+        public static void RHIInstance_CreateLogicDevice(IntPtr inst, uint windowId)
+        {
+            Native_RHIInstance_CreateLogicDevice(inst, windowId);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_CreateLogicDevice));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int RHIInstance_GetSuitableSwapChainFormat(IntPtr inst, uint windowId);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_IsPhysicalDeviceAvailable", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern int Native_RHIInstance_IsPhysicalDeviceAvailable(IntPtr inst);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int RHIInstance_GetSuitablePresentMode(IntPtr inst, uint windowId);
+        public static int RHIInstance_IsPhysicalDeviceAvailable(IntPtr inst)
+        {
+            int result = Native_RHIInstance_IsPhysicalDeviceAvailable(inst);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_IsPhysicalDeviceAvailable));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIInstance_GetAdapterName(IntPtr inst);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_IsSurfacesAvailable", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern int Native_RHIInstance_IsSurfacesAvailable(IntPtr inst);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIInstance_GetAdapterTypeName(IntPtr inst);
+        public static int RHIInstance_IsSurfacesAvailable(IntPtr inst)
+        {
+            int result = Native_RHIInstance_IsSurfacesAvailable(inst);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_IsSurfacesAvailable));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIInstance_GetAdapterDriverInfo(IntPtr inst);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_GetMaxFramesInFlight", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern uint Native_RHIInstance_GetMaxFramesInFlight(IntPtr inst);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIInstance_GetEnabledInstanceExtensions(IntPtr inst);
+        public static uint RHIInstance_GetMaxFramesInFlight(IntPtr inst)
+        {
+            uint result = Native_RHIInstance_GetMaxFramesInFlight(inst);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_GetMaxFramesInFlight));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIInstance_GetEnabledDeviceExtensions(IntPtr inst);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_IsEnableValidation", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern int Native_RHIInstance_IsEnableValidation(IntPtr inst);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIInstance_GetMissingDeviceExtensions(IntPtr inst);
+        public static int RHIInstance_IsEnableValidation(IntPtr inst)
+        {
+            int result = Native_RHIInstance_IsEnableValidation(inst);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_IsEnableValidation));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_GetExternalIndex", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern uint Native_RHIInstance_GetExternalIndex(IntPtr inst);
+
+        public static uint RHIInstance_GetExternalIndex(IntPtr inst)
+        {
+            uint result = Native_RHIInstance_GetExternalIndex(inst);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_GetExternalIndex));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_IsSupportLinearColorSpace", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern int Native_RHIInstance_IsSupportLinearColorSpace(IntPtr inst, uint windowId);
+
+        public static int RHIInstance_IsSupportLinearColorSpace(IntPtr inst, uint windowId)
+        {
+            int result = Native_RHIInstance_IsSupportLinearColorSpace(inst, windowId);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_IsSupportLinearColorSpace));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_PresentModeSupported", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern int Native_RHIInstance_PresentModeSupported(IntPtr inst, uint windowId, int mode);
+
+        public static int RHIInstance_PresentModeSupported(IntPtr inst, uint windowId, int mode)
+        {
+            int result = Native_RHIInstance_PresentModeSupported(inst, windowId, mode);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_PresentModeSupported));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_SetCurrentPresentMode", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIInstance_SetCurrentPresentMode(IntPtr inst, uint windowId, int mode);
+
+        public static void RHIInstance_SetCurrentPresentMode(IntPtr inst, uint windowId, int mode)
+        {
+            Native_RHIInstance_SetCurrentPresentMode(inst, windowId, mode);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_SetCurrentPresentMode));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_GetSuitableSwapChainFormat", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern int Native_RHIInstance_GetSuitableSwapChainFormat(IntPtr inst, uint windowId);
+
+        public static int RHIInstance_GetSuitableSwapChainFormat(IntPtr inst, uint windowId)
+        {
+            int result = Native_RHIInstance_GetSuitableSwapChainFormat(inst, windowId);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_GetSuitableSwapChainFormat));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_GetSuitablePresentMode", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern int Native_RHIInstance_GetSuitablePresentMode(IntPtr inst, uint windowId);
+
+        public static int RHIInstance_GetSuitablePresentMode(IntPtr inst, uint windowId)
+        {
+            int result = Native_RHIInstance_GetSuitablePresentMode(inst, windowId);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_GetSuitablePresentMode));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_GetAdapterName", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIInstance_GetAdapterName(IntPtr inst);
+
+        public static IntPtr RHIInstance_GetAdapterName(IntPtr inst)
+        {
+            IntPtr result = Native_RHIInstance_GetAdapterName(inst);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_GetAdapterName));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_GetAdapterTypeName", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIInstance_GetAdapterTypeName(IntPtr inst);
+
+        public static IntPtr RHIInstance_GetAdapterTypeName(IntPtr inst)
+        {
+            IntPtr result = Native_RHIInstance_GetAdapterTypeName(inst);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_GetAdapterTypeName));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_GetAdapterDriverInfo", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIInstance_GetAdapterDriverInfo(IntPtr inst);
+
+        public static IntPtr RHIInstance_GetAdapterDriverInfo(IntPtr inst)
+        {
+            IntPtr result = Native_RHIInstance_GetAdapterDriverInfo(inst);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_GetAdapterDriverInfo));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_GetEnabledInstanceExtensions", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIInstance_GetEnabledInstanceExtensions(IntPtr inst);
+
+        public static IntPtr RHIInstance_GetEnabledInstanceExtensions(IntPtr inst)
+        {
+            IntPtr result = Native_RHIInstance_GetEnabledInstanceExtensions(inst);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_GetEnabledInstanceExtensions));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_GetEnabledDeviceExtensions", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIInstance_GetEnabledDeviceExtensions(IntPtr inst);
+
+        public static IntPtr RHIInstance_GetEnabledDeviceExtensions(IntPtr inst)
+        {
+            IntPtr result = Native_RHIInstance_GetEnabledDeviceExtensions(inst);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_GetEnabledDeviceExtensions));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIInstance_GetMissingDeviceExtensions", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIInstance_GetMissingDeviceExtensions(IntPtr inst);
+
+        public static IntPtr RHIInstance_GetMissingDeviceExtensions(IntPtr inst)
+        {
+            IntPtr result = Native_RHIInstance_GetMissingDeviceExtensions(inst);
+            RHIInterop.ThrowIfFailed(nameof(RHIInstance_GetMissingDeviceExtensions));
+            return result;
+        }
 
     }
 }

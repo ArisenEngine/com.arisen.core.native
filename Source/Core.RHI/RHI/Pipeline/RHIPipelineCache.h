@@ -9,6 +9,7 @@
 
 namespace ArisenEngine::RHI
 {
+    class RHIDevice;
     class RHIPipelineState;
 
     // TODO
@@ -28,16 +29,19 @@ namespace ArisenEngine::RHI
     {
     public:
         NO_COPY_NO_MOVE_NO_DEFAULT(RHIPipelineCache)
-        RHIPipelineCache(UInt32 maxFramesInFlight);
+        RHIPipelineCache(RHIDevice* device, UInt32 maxFramesInFlight);
         virtual ~RHIPipelineCache() noexcept = default;
+        RHIDevice* GetOwnerDevice() const { return m_Device; }
         virtual RHIPipelineHandle GetGraphicsPipeline(RHIPipelineState* pso) = 0;
         virtual RHIPipelineHandle GetComputePipeline(RHIPipelineState* pso) = 0;
         virtual RHIPipelineHandle GetRayTracingPipeline(RHIPipelineState* pso) = 0;
-        virtual void ReleasePipeline(RHIPipelineHandle handle) = 0;
+        virtual bool ReleasePipeline(RHIPipelineHandle handle) = 0;
+        virtual bool IsAlive(RHIPipelineHandle handle) const = 0;
 
         virtual std::unique_ptr<RHIPipelineState> GetPipelineState() = 0;
 
     protected:
+        RHIDevice* m_Device;
         UInt32 m_MaxFramesInFlight;
     };
 }

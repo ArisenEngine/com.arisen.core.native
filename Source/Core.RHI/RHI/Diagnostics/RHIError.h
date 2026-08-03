@@ -1,44 +1,126 @@
 #pragma once
+
 #include "../Definitions/CoreRHICommon.h"
+#include "RHIAbiOwnerRegistry.h"
+#include <cstdint>
 
 namespace ArisenEngine::RHI
 {
-    /**
-     * @brief RHI Error codes
-     */
-    enum class EErrorCode
+    enum class EErrorCode : int32_t
     {
-        None = 0, ///< No error
-        OutOfMemory = 1, ///< Memory allocation failed
-        InvalidHandle = 2, ///< Invalid resource handle
-        DeviceLost = 3, ///< GPU device was lost
-        ValidationFailed = 4, ///< Validation layer error
-        InitializationFailed = 5, ///< RHI initialization failed
-        ShaderCompilationFailed = 6, ///< Shader compilation error
-        PipelineCreationFailed = 7, ///< Pipeline creation error
-        InvalidParameter = 8, ///< Invalid function parameter
-        UnsupportedFeature = 9, ///< Feature not supported
-        Unknown = 99 ///< Unknown error
+        None = 0,
+        OutOfMemory = 1,
+        InvalidHandle = 2,
+        DeviceLost = 3,
+        ValidationFailed = 4,
+        InitializationFailed = 5,
+        ShaderCompilationFailed = 6,
+        PipelineCreationFailed = 7,
+        InvalidParameter = 8,
+        UnsupportedFeature = 9,
+        InvalidState = 10,
+        BackendFailure = 11,
+        NativeException = 12,
+        Unknown = 99
     };
 
-    /**
-     * @brief Get the last error code from the current thread.
-     */
-    RHI_DLL EErrorCode GetLastError();
+    struct RHIErrorInfo
+    {
+        int32_t code;
+        int32_t backendResult;
+        uint32_t handleIndex;
+        uint32_t handleGeneration;
+        uint64_t objectIdentity;
+        const char* entryPoint;
+        const char* operation;
+        const char* objectType;
+        const char* message;
+    };
 
-    /**
-     * @brief Get a human-readable message for the last error.
-     */
-    RHI_DLL const char* GetLastErrorMessage();
+    RHI_DLL EErrorCode GetLastError() noexcept;
+    RHI_DLL const char* GetLastErrorMessage() noexcept;
+    RHI_DLL void GetLastErrorInfo(RHIErrorInfo& outInfo) noexcept;
+    RHI_DLL void ClearError() noexcept;
 
-    /**
-     * @brief Clear the current thread's error state.
-     */
-    RHI_DLL void ClearError();
+    RHI_DLL void SetLastError(EErrorCode code, const char* message = nullptr) noexcept;
+    RHI_DLL void SetLastErrorDetailed(EErrorCode code,
+                                      const char* operation,
+                                      int32_t backendResult = 0,
+                                      const char* objectType = nullptr,
+                                      uint64_t objectIdentity = 0,
+                                      uint32_t handleIndex = UINT32_MAX,
+                                      uint32_t handleGeneration = 0,
+                                      const char* message = nullptr) noexcept;
 
-    /**
-     * @brief Set the last error for the current thread.
-     * @internal This should only be called by RHI implementations.
-     */
-    RHI_DLL void SetLastError(EErrorCode code, const char* message = nullptr);
-} // namespace ArisenEngine::RHI
+    [[noreturn]] RHI_DLL void ThrowInvalidParameter(const char* operation,
+                                                    const char* parameter,
+                                                    const char* message = nullptr);
+    [[noreturn]] RHI_DLL void ThrowInvalidEnumValue(const char* operation,
+                                                    const char* parameter,
+                                                    int64_t value);
+    [[noreturn]] RHI_DLL void ThrowInvalidFlagBits(const char* operation,
+                                                  const char* parameter,
+                                                  uint64_t value,
+                                                  uint64_t invalidBits);
+    [[noreturn]] RHI_DLL void ThrowInvalidHandle(const char* operation,
+                                                const char* objectType,
+                                                uint32_t handleIndex,
+                                                uint32_t handleGeneration,
+                                                const char* message = nullptr,
+                                                uint64_t objectIdentity = 0);
+    [[noreturn]] RHI_DLL void ThrowInvalidState(const char* operation,
+                                               const char* objectType,
+                                               uint64_t objectIdentity,
+                                               const char* message,
+                                               uint32_t handleIndex = UINT32_MAX,
+                                               uint32_t handleGeneration = 0);
+    RHI_DLL void RequireAbiPointer(const void* value,
+                                   const char* operation,
+                                   const char* objectType,
+                                   const char* parameter);
+    RHI_DLL void RequireAbiArray(const void* value,
+                                 uint64_t count,
+                                 const char* operation,
+                                 const char* elementType,
+                                 const char* parameter);
+
+    class RHIAbiCallScope final
+    {
+    public:
+        explicit RHIAbiCallScope(const char* entryPoint) noexcept;
+        ~RHIAbiCallScope() noexcept;
+
+        RHIAbiCallScope(const RHIAbiCallScope&) = delete;
+        RHIAbiCallScope& operator=(const RHIAbiCallScope&) = delete;
+
+        void CaptureCurrentException() noexcept;
+
+    private:
+        bool m_Failed = false;
+    };
+}
+
+extern "C" RHI_DLL void RHIError_GetLastErrorInfo(ArisenEngine::RHI::RHIErrorInfo* outInfo) noexcept;
+
+#define RHI_ABI_GUARD() \
+    ::ArisenEngine::RHI::RHIAbiCallScope arisenRhiAbiCallScope(__func__); \
+    try
+
+#define RHI_ABI_CATCH_VOID() \
+    catch (...) \
+    { \
+        arisenRhiAbiCallScope.CaptureCurrentException(); \
+    }
+
+#define RHI_ABI_CATCH_RETURN() \
+    catch (...) \
+    { \
+        arisenRhiAbiCallScope.CaptureCurrentException(); \
+        return {}; \
+    }
+
+#define RHI_ABI_REQUIRE_POINTER(value, objectType) \
+    ::ArisenEngine::RHI::RequireAbiPointer((value), __func__, (objectType), #value)
+
+#define RHI_ABI_REQUIRE_ARRAY(value, count, elementType) \
+    ::ArisenEngine::RHI::RequireAbiArray((value), (count), __func__, (elementType), #value)

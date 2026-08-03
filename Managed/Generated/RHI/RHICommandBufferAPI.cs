@@ -10,95 +10,275 @@ namespace Arisen.Native.RHI
     {
         private const string DllName = "Core.RHI.dll";
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_Begin(IntPtr cb, uint frameIndex);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_Begin", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_Begin(IntPtr cb, uint frameIndex);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_End(IntPtr cb);
+        public static void RHICommandBuffer_Begin(IntPtr cb, uint frameIndex)
+        {
+            Native_RHICommandBuffer_Begin(cb, frameIndex);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_Begin));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_BeginRenderPass(IntPtr cb, RHIRenderPassHandle renderPass, RHIFrameBufferHandle frameBuffer, int subpassContents, uint clearValueCount, IntPtr pClearValues);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_End", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_End(IntPtr cb);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_EndRenderPass(IntPtr cb);
+        public static void RHICommandBuffer_End(IntPtr cb)
+        {
+            Native_RHICommandBuffer_End(cb);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_End));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_BindPipeline(IntPtr cb, RHIPipelineHandle pipeline);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_BeginRenderPass", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_BeginRenderPass(IntPtr cb, RHIRenderPassHandle renderPass, RHIFrameBufferHandle frameBuffer, int subpassContents, uint clearValueCount, IntPtr pClearValues);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_SetViewport(IntPtr cb, float x, float y, float width, float height, float minDepth, float maxDepth);
+        public static void RHICommandBuffer_BeginRenderPass(IntPtr cb, RHIRenderPassHandle renderPass, RHIFrameBufferHandle frameBuffer, int subpassContents, uint clearValueCount, IntPtr pClearValues)
+        {
+            Native_RHICommandBuffer_BeginRenderPass(cb, renderPass, frameBuffer, subpassContents, clearValueCount, pClearValues);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_BeginRenderPass));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_SetScissor(IntPtr cb, uint offsetX, uint offsetY, uint width, uint height);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_EndRenderPass", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_EndRenderPass(IntPtr cb);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_BindVertexBuffers(IntPtr cb, RHIBufferHandle buffer, ulong offset);
+        public static void RHICommandBuffer_EndRenderPass(IntPtr cb)
+        {
+            Native_RHICommandBuffer_EndRenderPass(cb);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_EndRenderPass));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_BindIndexBuffer(IntPtr cb, RHIBufferHandle buffer, ulong offset, int indexType);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_BindPipeline", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_BindPipeline(IntPtr cb, RHIPipelineHandle pipeline);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_Draw(IntPtr cb, uint vertexCount, uint instanceCount, uint firstVertex, uint firstInstance, uint firstBinding);
+        public static void RHICommandBuffer_BindPipeline(IntPtr cb, RHIPipelineHandle pipeline)
+        {
+            Native_RHICommandBuffer_BindPipeline(cb, pipeline);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_BindPipeline));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_DrawIndexed(IntPtr cb, uint indexCount, uint instanceCount, uint firstIndex, int vertexOffset, uint firstInstance, uint firstBinding);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_SetViewport", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_SetViewport(IntPtr cb, float x, float y, float width, float height, float minDepth, float maxDepth);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_PipelineBarrier(IntPtr cb, int srcStage, int dstStage, uint dependency, IntPtr pMemoryBarriers, uint memoryBarrierCount, IntPtr pImageMemoryBarriers, uint imageMemoryBarrierCount, IntPtr pBufferMemoryBarriers, uint bufferMemoryBarrierCount);
+        public static void RHICommandBuffer_SetViewport(IntPtr cb, float x, float y, float width, float height, float minDepth, float maxDepth)
+        {
+            Native_RHICommandBuffer_SetViewport(cb, x, y, width, height, minDepth, maxDepth);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_SetViewport));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_TransitionImageLayout(IntPtr cb, RHIImageHandle image, int targetLayout);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_SetScissor", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_SetScissor(IntPtr cb, uint offsetX, uint offsetY, uint width, uint height);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_TransitionImageLayoutExplicit(IntPtr cb, RHIImageHandle image, int oldLayout, int targetLayout);
+        public static void RHICommandBuffer_SetScissor(IntPtr cb, uint offsetX, uint offsetY, uint width, uint height)
+        {
+            Native_RHICommandBuffer_SetScissor(cb, offsetX, offsetY, width, height);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_SetScissor));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_TransitionImageLayoutWithQueueFamily(IntPtr cb, RHIImageHandle image, int oldLayout, int targetLayout, uint srcQueueFamilyIndex, uint dstQueueFamilyIndex);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_BindVertexBuffers", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_BindVertexBuffers(IntPtr cb, RHIBufferHandle buffer, ulong offset);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_BindDescriptorSets(IntPtr cb, int bindPoint, uint firstSet, RHIDescriptorPoolHandle poolHandle, uint poolId);
+        public static void RHICommandBuffer_BindVertexBuffers(IntPtr cb, RHIBufferHandle buffer, ulong offset)
+        {
+            Native_RHICommandBuffer_BindVertexBuffers(cb, buffer, offset);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_BindVertexBuffers));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_PushConstants(IntPtr cb, uint offset, uint size, IntPtr data, uint stageFlags);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_BindIndexBuffer", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_BindIndexBuffer(IntPtr cb, RHIBufferHandle buffer, ulong offset, int indexType);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_CopyBuffer(IntPtr cb, RHIBufferHandle src, ulong srcOffset, RHIBufferHandle dst, ulong dstOffset, ulong size);
+        public static void RHICommandBuffer_BindIndexBuffer(IntPtr cb, RHIBufferHandle buffer, ulong offset, int indexType)
+        {
+            Native_RHICommandBuffer_BindIndexBuffer(cb, buffer, offset, indexType);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_BindIndexBuffer));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_CopyBufferToImage2DSubresource(IntPtr cb, RHIBufferHandle src, RHIImageHandle dst, int dstImageLayout, ulong bufferOffset, uint mipLevel, uint width, uint height);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_Draw", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_Draw(IntPtr cb, uint vertexCount, uint instanceCount, uint firstVertex, uint firstInstance, uint firstBinding);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_CopyBufferToImage2D(IntPtr cb, RHIBufferHandle src, RHIImageHandle dst, int dstImageLayout, ulong bufferOffset, uint width, uint height);
+        public static void RHICommandBuffer_Draw(IntPtr cb, uint vertexCount, uint instanceCount, uint firstVertex, uint firstInstance, uint firstBinding)
+        {
+            Native_RHICommandBuffer_Draw(cb, vertexCount, instanceCount, firstVertex, firstInstance, firstBinding);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_Draw));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_CopyImageToBuffer2D(IntPtr cb, RHIImageHandle src, int srcImageLayout, uint srcImageAspect, RHIBufferHandle dst, ulong bufferOffset, uint width, uint height);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_DrawIndexed", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_DrawIndexed(IntPtr cb, uint indexCount, uint instanceCount, uint firstIndex, int vertexOffset, uint firstInstance, uint firstBinding);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_BeginDebugLabel(IntPtr cb, [MarshalAs(UnmanagedType.LPUTF8Str)] string label, float[] color);
+        public static void RHICommandBuffer_DrawIndexed(IntPtr cb, uint indexCount, uint instanceCount, uint firstIndex, int vertexOffset, uint firstInstance, uint firstBinding)
+        {
+            Native_RHICommandBuffer_DrawIndexed(cb, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance, firstBinding);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_DrawIndexed));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_EndDebugLabel(IntPtr cb);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_PipelineBarrier", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_PipelineBarrier(IntPtr cb, int srcStage, int dstStage, uint dependency, IntPtr pMemoryBarriers, uint memoryBarrierCount, IntPtr pImageMemoryBarriers, uint imageMemoryBarrierCount, IntPtr pBufferMemoryBarriers, uint bufferMemoryBarrierCount);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_InsertDebugMarker(IntPtr cb, [MarshalAs(UnmanagedType.LPUTF8Str)] string label, float[] color);
+        public static void RHICommandBuffer_PipelineBarrier(IntPtr cb, int srcStage, int dstStage, uint dependency, IntPtr pMemoryBarriers, uint memoryBarrierCount, IntPtr pImageMemoryBarriers, uint imageMemoryBarrierCount, IntPtr pBufferMemoryBarriers, uint bufferMemoryBarrierCount)
+        {
+            Native_RHICommandBuffer_PipelineBarrier(cb, srcStage, dstStage, dependency, pMemoryBarriers, memoryBarrierCount, pImageMemoryBarriers, imageMemoryBarrierCount, pBufferMemoryBarriers, bufferMemoryBarrierCount);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_PipelineBarrier));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_Dispatch(IntPtr cb, uint groupCountX, uint groupCountY, uint groupCountZ);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_TransitionImageLayout", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_TransitionImageLayout(IntPtr cb, RHIImageHandle image, int targetLayout);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_BindDescriptorSet(IntPtr cb, int bindPoint, uint firstSet, RHIDescriptorPoolHandle poolHandle, uint poolId, uint setIdx);
+        public static void RHICommandBuffer_TransitionImageLayout(IntPtr cb, RHIImageHandle image, int targetLayout)
+        {
+            Native_RHICommandBuffer_TransitionImageLayout(cb, image, targetLayout);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_TransitionImageLayout));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_BeginRendering(IntPtr cb, uint imgViewIdx, uint imgViewGen, int imageLayout, int loadOp, int storeOp, float clearR, float clearG, float clearB, float clearA, int x, int y, uint width, uint height);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_TransitionImageLayoutExplicit", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_TransitionImageLayoutExplicit(IntPtr cb, RHIImageHandle image, int oldLayout, int targetLayout);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_BeginRenderingWithDepth(IntPtr cb, uint imgViewIdx, uint imgViewGen, int imageLayout, int loadOp, int storeOp, float clearR, float clearG, float clearB, float clearA, uint depthViewIdx, uint depthViewGen, int depthLayout, int depthLoadOp, int depthStoreOp, float clearDepth, uint clearStencil, int x, int y, uint width, uint height);
+        public static void RHICommandBuffer_TransitionImageLayoutExplicit(IntPtr cb, RHIImageHandle image, int oldLayout, int targetLayout)
+        {
+            Native_RHICommandBuffer_TransitionImageLayoutExplicit(cb, image, oldLayout, targetLayout);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_TransitionImageLayoutExplicit));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_BeginRenderingDepthOnly(IntPtr cb, uint depthViewIdx, uint depthViewGen, int depthLayout, int depthLoadOp, int depthStoreOp, float clearDepth, uint clearStencil, int x, int y, uint width, uint height);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_TransitionImageLayoutWithQueueFamily", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_TransitionImageLayoutWithQueueFamily(IntPtr cb, RHIImageHandle image, int oldLayout, int targetLayout, uint srcQueueFamilyIndex, uint dstQueueFamilyIndex);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBuffer_EndRendering(IntPtr cb);
+        public static void RHICommandBuffer_TransitionImageLayoutWithQueueFamily(IntPtr cb, RHIImageHandle image, int oldLayout, int targetLayout, uint srcQueueFamilyIndex, uint dstQueueFamilyIndex)
+        {
+            Native_RHICommandBuffer_TransitionImageLayoutWithQueueFamily(cb, image, oldLayout, targetLayout, srcQueueFamilyIndex, dstQueueFamilyIndex);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_TransitionImageLayoutWithQueueFamily));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_BindDescriptorSets", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_BindDescriptorSets(IntPtr cb, int bindPoint, uint firstSet, RHIDescriptorPoolHandle poolHandle, uint poolId);
+
+        public static void RHICommandBuffer_BindDescriptorSets(IntPtr cb, int bindPoint, uint firstSet, RHIDescriptorPoolHandle poolHandle, uint poolId)
+        {
+            Native_RHICommandBuffer_BindDescriptorSets(cb, bindPoint, firstSet, poolHandle, poolId);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_BindDescriptorSets));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_PushConstants", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_PushConstants(IntPtr cb, uint offset, uint size, IntPtr data, uint stageFlags);
+
+        public static void RHICommandBuffer_PushConstants(IntPtr cb, uint offset, uint size, IntPtr data, uint stageFlags)
+        {
+            Native_RHICommandBuffer_PushConstants(cb, offset, size, data, stageFlags);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_PushConstants));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_CopyBuffer", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_CopyBuffer(IntPtr cb, RHIBufferHandle src, ulong srcOffset, RHIBufferHandle dst, ulong dstOffset, ulong size);
+
+        public static void RHICommandBuffer_CopyBuffer(IntPtr cb, RHIBufferHandle src, ulong srcOffset, RHIBufferHandle dst, ulong dstOffset, ulong size)
+        {
+            Native_RHICommandBuffer_CopyBuffer(cb, src, srcOffset, dst, dstOffset, size);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_CopyBuffer));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_CopyBufferToImage2DSubresource", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_CopyBufferToImage2DSubresource(IntPtr cb, RHIBufferHandle src, RHIImageHandle dst, int dstImageLayout, ulong bufferOffset, uint mipLevel, uint width, uint height);
+
+        public static void RHICommandBuffer_CopyBufferToImage2DSubresource(IntPtr cb, RHIBufferHandle src, RHIImageHandle dst, int dstImageLayout, ulong bufferOffset, uint mipLevel, uint width, uint height)
+        {
+            Native_RHICommandBuffer_CopyBufferToImage2DSubresource(cb, src, dst, dstImageLayout, bufferOffset, mipLevel, width, height);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_CopyBufferToImage2DSubresource));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_CopyBufferToImage2D", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_CopyBufferToImage2D(IntPtr cb, RHIBufferHandle src, RHIImageHandle dst, int dstImageLayout, ulong bufferOffset, uint width, uint height);
+
+        public static void RHICommandBuffer_CopyBufferToImage2D(IntPtr cb, RHIBufferHandle src, RHIImageHandle dst, int dstImageLayout, ulong bufferOffset, uint width, uint height)
+        {
+            Native_RHICommandBuffer_CopyBufferToImage2D(cb, src, dst, dstImageLayout, bufferOffset, width, height);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_CopyBufferToImage2D));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_CopyImageToBuffer2D", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_CopyImageToBuffer2D(IntPtr cb, RHIImageHandle src, int srcImageLayout, uint srcImageAspect, RHIBufferHandle dst, ulong bufferOffset, uint width, uint height);
+
+        public static void RHICommandBuffer_CopyImageToBuffer2D(IntPtr cb, RHIImageHandle src, int srcImageLayout, uint srcImageAspect, RHIBufferHandle dst, ulong bufferOffset, uint width, uint height)
+        {
+            Native_RHICommandBuffer_CopyImageToBuffer2D(cb, src, srcImageLayout, srcImageAspect, dst, bufferOffset, width, height);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_CopyImageToBuffer2D));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_BeginDebugLabel", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_BeginDebugLabel(IntPtr cb, [MarshalAs(UnmanagedType.LPUTF8Str)] string label, float[] color);
+
+        public static void RHICommandBuffer_BeginDebugLabel(IntPtr cb, [MarshalAs(UnmanagedType.LPUTF8Str)] string label, float[] color)
+        {
+            Native_RHICommandBuffer_BeginDebugLabel(cb, label, color);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_BeginDebugLabel));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_EndDebugLabel", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_EndDebugLabel(IntPtr cb);
+
+        public static void RHICommandBuffer_EndDebugLabel(IntPtr cb)
+        {
+            Native_RHICommandBuffer_EndDebugLabel(cb);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_EndDebugLabel));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_InsertDebugMarker", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_InsertDebugMarker(IntPtr cb, [MarshalAs(UnmanagedType.LPUTF8Str)] string label, float[] color);
+
+        public static void RHICommandBuffer_InsertDebugMarker(IntPtr cb, [MarshalAs(UnmanagedType.LPUTF8Str)] string label, float[] color)
+        {
+            Native_RHICommandBuffer_InsertDebugMarker(cb, label, color);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_InsertDebugMarker));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_Dispatch", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_Dispatch(IntPtr cb, uint groupCountX, uint groupCountY, uint groupCountZ);
+
+        public static void RHICommandBuffer_Dispatch(IntPtr cb, uint groupCountX, uint groupCountY, uint groupCountZ)
+        {
+            Native_RHICommandBuffer_Dispatch(cb, groupCountX, groupCountY, groupCountZ);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_Dispatch));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_BindDescriptorSet", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_BindDescriptorSet(IntPtr cb, int bindPoint, uint firstSet, RHIDescriptorPoolHandle poolHandle, uint poolId, uint setIdx);
+
+        public static void RHICommandBuffer_BindDescriptorSet(IntPtr cb, int bindPoint, uint firstSet, RHIDescriptorPoolHandle poolHandle, uint poolId, uint setIdx)
+        {
+            Native_RHICommandBuffer_BindDescriptorSet(cb, bindPoint, firstSet, poolHandle, poolId, setIdx);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_BindDescriptorSet));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_BeginRendering", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_BeginRendering(IntPtr cb, uint imgViewIdx, uint imgViewGen, int imageLayout, int loadOp, int storeOp, float clearR, float clearG, float clearB, float clearA, int x, int y, uint width, uint height);
+
+        public static void RHICommandBuffer_BeginRendering(IntPtr cb, uint imgViewIdx, uint imgViewGen, int imageLayout, int loadOp, int storeOp, float clearR, float clearG, float clearB, float clearA, int x, int y, uint width, uint height)
+        {
+            Native_RHICommandBuffer_BeginRendering(cb, imgViewIdx, imgViewGen, imageLayout, loadOp, storeOp, clearR, clearG, clearB, clearA, x, y, width, height);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_BeginRendering));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_BeginRenderingWithDepth", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_BeginRenderingWithDepth(IntPtr cb, uint imgViewIdx, uint imgViewGen, int imageLayout, int loadOp, int storeOp, float clearR, float clearG, float clearB, float clearA, uint depthViewIdx, uint depthViewGen, int depthLayout, int depthLoadOp, int depthStoreOp, float clearDepth, uint clearStencil, int x, int y, uint width, uint height);
+
+        public static void RHICommandBuffer_BeginRenderingWithDepth(IntPtr cb, uint imgViewIdx, uint imgViewGen, int imageLayout, int loadOp, int storeOp, float clearR, float clearG, float clearB, float clearA, uint depthViewIdx, uint depthViewGen, int depthLayout, int depthLoadOp, int depthStoreOp, float clearDepth, uint clearStencil, int x, int y, uint width, uint height)
+        {
+            Native_RHICommandBuffer_BeginRenderingWithDepth(cb, imgViewIdx, imgViewGen, imageLayout, loadOp, storeOp, clearR, clearG, clearB, clearA, depthViewIdx, depthViewGen, depthLayout, depthLoadOp, depthStoreOp, clearDepth, clearStencil, x, y, width, height);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_BeginRenderingWithDepth));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_BeginRenderingDepthOnly", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_BeginRenderingDepthOnly(IntPtr cb, uint depthViewIdx, uint depthViewGen, int depthLayout, int depthLoadOp, int depthStoreOp, float clearDepth, uint clearStencil, int x, int y, uint width, uint height);
+
+        public static void RHICommandBuffer_BeginRenderingDepthOnly(IntPtr cb, uint depthViewIdx, uint depthViewGen, int depthLayout, int depthLoadOp, int depthStoreOp, float clearDepth, uint clearStencil, int x, int y, uint width, uint height)
+        {
+            Native_RHICommandBuffer_BeginRenderingDepthOnly(cb, depthViewIdx, depthViewGen, depthLayout, depthLoadOp, depthStoreOp, clearDepth, clearStencil, x, y, width, height);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_BeginRenderingDepthOnly));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBuffer_EndRendering", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBuffer_EndRendering(IntPtr cb);
+
+        public static void RHICommandBuffer_EndRendering(IntPtr cb)
+        {
+            Native_RHICommandBuffer_EndRendering(cb);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBuffer_EndRendering));
+        }
 
     }
 }

@@ -1,4 +1,5 @@
 #include "RHILoader.h"
+#include "RHI/Diagnostics/RHIAbiOwnerRegistry.h"
 #include "Logger/Logger.h"
 #include "Base/FoundationMinimal.h"
 
@@ -33,6 +34,7 @@ namespace ArisenEngine::RHI
         LOG_INFO("[RHILoader::DestroyCurrentInstance] Destroying active RHI instance.");
         auto* instance = _current_instance;
         _current_instance = nullptr;
+        InvalidateAbiOwnerByObject(instance, ERHIAbiOwnerType::Instance);
         delete instance;
     }
 

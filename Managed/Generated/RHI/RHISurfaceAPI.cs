@@ -10,17 +10,43 @@ namespace Arisen.Native.RHI
     {
         private const string DllName = "Core.RHI.dll";
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHISurface_InitSwapChain(IntPtr surface);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISurface_InitSwapChain", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHISurface_InitSwapChain(IntPtr surface);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHISurface_GetSwapChain(IntPtr surface);
+        public static void RHISurface_InitSwapChain(IntPtr surface)
+        {
+            Native_RHISurface_InitSwapChain(surface);
+            RHIInterop.ThrowIfFailed(nameof(RHISurface_InitSwapChain));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHISurface_SetResolution(IntPtr surface, uint width, uint height);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISurface_GetSwapChain", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHISurface_GetSwapChain(IntPtr surface);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool RHISurface_TrySetResolution(IntPtr surface, uint width, uint height);
+        public static IntPtr RHISurface_GetSwapChain(IntPtr surface)
+        {
+            IntPtr result = Native_RHISurface_GetSwapChain(surface);
+            RHIInterop.ThrowIfFailed(nameof(RHISurface_GetSwapChain));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISurface_SetResolution", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHISurface_SetResolution(IntPtr surface, uint width, uint height);
+
+        public static void RHISurface_SetResolution(IntPtr surface, uint width, uint height)
+        {
+            Native_RHISurface_SetResolution(surface, width, height);
+            RHIInterop.ThrowIfFailed(nameof(RHISurface_SetResolution));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISurface_TrySetResolution", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern bool Native_RHISurface_TrySetResolution(IntPtr surface, uint width, uint height);
+
+        public static bool RHISurface_TrySetResolution(IntPtr surface, uint width, uint height)
+        {
+            bool result = Native_RHISurface_TrySetResolution(surface, width, height);
+            RHIInterop.ThrowIfFailed(nameof(RHISurface_TrySetResolution));
+            return result;
+        }
 
     }
 }

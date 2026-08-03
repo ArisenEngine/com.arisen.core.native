@@ -44,7 +44,10 @@ namespace ArisenEngine::Diagnostics
 #endif
     }
 
-    Logger::Logger(): m_IsInitialize(false), m_LogCallback(nullptr)
+    Logger::Logger()
+        : m_LifecycleState(LifecycleState::Stopped),
+          m_ActiveLogs(0),
+          m_LogCallback(nullptr)
     {
     }
 
@@ -54,8 +57,18 @@ namespace ArisenEngine::Diagnostics
 
     bool Logger::Initialize()
     {
-        if (m_IsInitialize) return true;
+        {
+            std::unique_lock lock(m_LifecycleMutex);
+            m_LifecycleChanged.wait(lock, [this]
+            {
+                return m_LifecycleState != LifecycleState::Initializing &&
+                    m_LifecycleState != LifecycleState::StopRequested;
+            });
+            if (m_LifecycleState == LifecycleState::Accepting) return true;
+            m_LifecycleState = LifecycleState::Initializing;
+        }
 
+        bool initialized = false;
         try
         {
             std::filesystem::path log_dir;
@@ -104,15 +117,58 @@ namespace ArisenEngine::Diagnostics
 
             // Register with Foundation Bridge
             ArisenEngine::Diagnostics::Log::SetHandler(this);
+            initialized = true;
         }
         catch (const spdlog::spdlog_ex& ex)
         {
             std::printf("Log initialization failed: %s\n", ex.what());
-            return false;
+        }
+        catch (const std::exception& ex)
+        {
+            std::printf("Log initialization failed: %s\n", ex.what());
+        }
+        catch (...)
+        {
+            std::printf("Log initialization failed with an unknown native error.\n");
         }
 
-        m_IsInitialize = true;
-        return true;
+        if (!initialized)
+        {
+            try
+            {
+                Log::SetHandler(nullptr);
+            }
+            catch (const std::exception& ex)
+            {
+                std::printf("Log handler rollback failed: %s\n", ex.what());
+            }
+            catch (...)
+            {
+                std::printf("Log handler rollback failed with an unknown native error.\n");
+            }
+
+            try
+            {
+                spdlog::shutdown();
+            }
+            catch (const std::exception& ex)
+            {
+                std::printf("Log queue rollback failed: %s\n", ex.what());
+            }
+            catch (...)
+            {
+                std::printf("Log queue rollback failed with an unknown native error.\n");
+            }
+        }
+
+        {
+            std::lock_guard lock(m_LifecycleMutex);
+            m_LifecycleState = initialized
+                ? LifecycleState::Accepting
+                : LifecycleState::Stopped;
+        }
+        m_LifecycleChanged.notify_all();
+        return initialized;
     }
 
     Logger& Logger::GetInstance()
@@ -131,13 +187,67 @@ namespace ArisenEngine::Diagnostics
 
     void Logger::Shutdown()
     {
-        ArisenEngine::Diagnostics::Log::SetHandler(nullptr);
-        if (auto* logger = spdlog::default_logger_raw())
+        Logger& instance = GetInstance();
         {
-            logger->flush();
+            std::unique_lock lock(instance.m_LifecycleMutex);
+            instance.m_LifecycleChanged.wait(lock, [&instance]
+            {
+                return instance.m_LifecycleState != LifecycleState::Initializing;
+            });
+            if (instance.m_LifecycleState == LifecycleState::StopRequested)
+            {
+                instance.m_LifecycleChanged.wait(lock, [&instance]
+                {
+                    return instance.m_LifecycleState == LifecycleState::Stopped;
+                });
+                return;
+            }
+
+            if (instance.m_LifecycleState == LifecycleState::Stopped)
+            {
+                lock.unlock();
+                Log::SetHandler(nullptr);
+                return;
+            }
+
+            instance.m_LifecycleState = LifecycleState::StopRequested;
         }
-        spdlog::shutdown();
-        GetInstance().m_IsInitialize = false;
+
+        Log::SetHandler(nullptr);
+
+        {
+            std::unique_lock lock(instance.m_LifecycleMutex);
+            instance.m_LifecycleChanged.wait(lock, [&instance]
+            {
+                return instance.m_ActiveLogs == 0;
+            });
+            instance.m_LogCallback = nullptr;
+        }
+
+        std::exception_ptr shutdownFailure;
+        try
+        {
+            if (auto* logger = spdlog::default_logger_raw())
+            {
+                logger->flush();
+            }
+            spdlog::shutdown();
+        }
+        catch (...)
+        {
+            shutdownFailure = std::current_exception();
+        }
+
+        {
+            std::lock_guard lock(instance.m_LifecycleMutex);
+            instance.m_LifecycleState = LifecycleState::Stopped;
+        }
+        instance.m_LifecycleChanged.notify_all();
+
+        if (shutdownFailure)
+        {
+            std::rethrow_exception(shutdownFailure);
+        }
     }
 
     void Logger::SetServerityLevel(LogLevel level)
@@ -167,69 +277,113 @@ namespace ArisenEngine::Diagnostics
 
     void Logger::BindCallback(LogCallback callback)
     {
+        std::unique_lock lock(m_LifecycleMutex);
+        if (callback != nullptr && m_LifecycleState != LifecycleState::Accepting)
+        {
+            return;
+        }
+
         m_LogCallback = callback;
+        if (callback == nullptr)
+        {
+            m_LifecycleChanged.wait(lock, [this] { return m_ActiveLogs == 0; });
+        }
     }
 
     void Logger::Log(LogLevel level, const char* msg, const LogSourceLocation& location, const char* thread_name)
     {
-        spdlog::level::level_enum spd_level;
-        bool needs_trace = false;
-        switch (level)
-        {
-        case LogLevel::Trace: spd_level = spdlog::level::trace;
-            break;
-        case LogLevel::Debug: spd_level = spdlog::level::debug;
-            break;
-        case LogLevel::Info: spd_level = spdlog::level::info;
-            break;
-        case LogLevel::Warning: spd_level = spdlog::level::warn;
-            needs_trace = true;
-            break;
-        case LogLevel::Error: spd_level = spdlog::level::err;
-            needs_trace = true;
-            break;
-        case LogLevel::Fatal: spd_level = spdlog::level::critical;
-            needs_trace = true;
-            break;
-        default: spd_level = spdlog::level::info;
-            break;
-        }
+        LogCallback callback = nullptr;
+        if (!BeginLog(callback)) return;
 
-        String full_msg = msg ? msg : "";
-        String trace;
-        if (needs_trace)
+        try
         {
-            trace = GetStacktrace();
-            if (!trace.IsEmpty())
+            spdlog::level::level_enum spd_level;
+            bool needs_trace = false;
+            switch (level)
             {
-                full_msg += "\n[stacktrace]\n" + trace;
-            }
-        }
-
-        spdlog::source_loc loc(location.file, static_cast<int>(location.line), location.function);
-
-        // Use spdlog's native logging with source location
-        if (auto logger = spdlog::default_logger())
-        {
-            logger->log(loc, spd_level, full_msg.GetString());
-        }
-
-        if (m_LogCallback)
-        {
-            // For callback, we still provide a thread ID string if not provided
-            String tid;
-            if (thread_name)
-            {
-                tid = thread_name;
-            }
-            else
-            {
-                std::stringstream ss;
-                ss << std::this_thread::get_id();
-                tid = ss.str().c_str();
+            case LogLevel::Trace: spd_level = spdlog::level::trace;
+                break;
+            case LogLevel::Debug: spd_level = spdlog::level::debug;
+                break;
+            case LogLevel::Info: spd_level = spdlog::level::info;
+                break;
+            case LogLevel::Warning: spd_level = spdlog::level::warn;
+                needs_trace = true;
+                break;
+            case LogLevel::Error: spd_level = spdlog::level::err;
+                needs_trace = true;
+                break;
+            case LogLevel::Fatal: spd_level = spdlog::level::critical;
+                needs_trace = true;
+                break;
+            default: spd_level = spdlog::level::info;
+                break;
             }
 
-            m_LogCallback(static_cast<UInt32>(level), tid.c_str(), msg ? msg : "", trace.c_str());
+            String full_msg = msg ? msg : "";
+            String trace;
+            if (needs_trace)
+            {
+                trace = GetStacktrace();
+                if (!trace.IsEmpty())
+                {
+                    full_msg += "\n[stacktrace]\n" + trace;
+                }
+            }
+
+            spdlog::source_loc loc(location.file, static_cast<int>(location.line), location.function);
+
+            // Use spdlog's native logging with source location
+            if (auto logger = spdlog::default_logger())
+            {
+                logger->log(loc, spd_level, full_msg.GetString());
+            }
+
+            if (callback)
+            {
+                // For callback, we still provide a thread ID string if not provided
+                String tid;
+                if (thread_name)
+                {
+                    tid = thread_name;
+                }
+                else
+                {
+                    std::stringstream ss;
+                    ss << std::this_thread::get_id();
+                    tid = ss.str().c_str();
+                }
+
+                callback(static_cast<UInt32>(level), tid.c_str(), msg ? msg : "", trace.c_str());
+            }
+        }
+        catch (...)
+        {
+            EndLog();
+            throw;
+        }
+
+        EndLog();
+    }
+
+    bool Logger::BeginLog(LogCallback& callback)
+    {
+        std::lock_guard lock(m_LifecycleMutex);
+        if (m_LifecycleState != LifecycleState::Accepting) return false;
+
+        ++m_ActiveLogs;
+        callback = m_LogCallback;
+        return true;
+    }
+
+    void Logger::EndLog()
+    {
+        std::lock_guard lock(m_LifecycleMutex);
+        assert(m_ActiveLogs > 0);
+        --m_ActiveLogs;
+        if (m_ActiveLogs == 0)
+        {
+            m_LifecycleChanged.notify_all();
         }
     }
 } // namespace ArisenEngine::Diagnostics

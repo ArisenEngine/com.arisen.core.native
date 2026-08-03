@@ -30,26 +30,26 @@ namespace ArisenEngine::RHI
         virtual ~RHIFactory() noexcept = default;
 
         virtual RHIShaderProgramHandle CreateGPUProgram() = 0;
-        virtual void ReleaseGPUProgram(RHIShaderProgramHandle handle) = 0;
+        virtual bool ReleaseGPUProgram(RHIShaderProgramHandle handle) = 0;
         virtual bool AttachProgramByteCode(RHIShaderProgramHandle handle, RHIShaderProgramDesc&& desc) = 0;
 
         virtual RHICommandBufferPoolHandle CreateCommandBufferPool(RHIQueueType queueType = RHIQueueType::Graphics) = 0;
-        virtual void ReleaseCommandBufferPool(RHICommandBufferPoolHandle handle) = 0;
+        virtual bool ReleaseCommandBufferPool(RHICommandBufferPoolHandle handle) = 0;
 
         virtual RHIRenderPassHandle CreateRenderPass() = 0;
-        virtual void ReleaseRenderPass(RHIRenderPassHandle renderPass) = 0;
+        virtual bool ReleaseRenderPass(RHIRenderPassHandle renderPass) = 0;
 
         virtual RHIFrameBufferHandle CreateFrameBuffer() = 0;
-        virtual void ReleaseFrameBuffer(RHIFrameBufferHandle frameBuffer) = 0;
+        virtual bool ReleaseFrameBuffer(RHIFrameBufferHandle frameBuffer) = 0;
 
         virtual RHIBufferHandle CreateBuffer(RHIBufferDescriptor&& desc, const String& name = "Anonymous") = 0;
-        virtual void ReleaseBuffer(RHIBufferHandle bufferHandle) = 0;
+        virtual bool ReleaseBuffer(RHIBufferHandle bufferHandle) = 0;
 
         virtual RHIImageHandle CreateImage(RHIImageDescriptor&& desc, const String& name = "Anonymous") = 0;
-        virtual void ReleaseImage(RHIImageHandle imageHandle) = 0;
+        virtual bool ReleaseImage(RHIImageHandle imageHandle) = 0;
 
         virtual RHIMemoryPoolHandle CreateMemoryPool(UInt64 size, UInt32 usageBits) = 0;
-        virtual void ReleaseMemoryPool(RHIMemoryPoolHandle handle) = 0;
+        virtual bool ReleaseMemoryPool(RHIMemoryPoolHandle handle) = 0;
 
         virtual RHIBufferHandle CreateBufferAliased(RHIBufferDescriptor&& desc, RHIMemoryPoolHandle pool, UInt64 offset,
                                                     const String& name = "Anonymous") = 0;
@@ -57,19 +57,19 @@ namespace ArisenEngine::RHI
                                                   const String& name = "Anonymous") = 0;
 
         virtual RHIImageViewHandle CreateImageView(RHIImageHandle image, RHIImageViewDesc&& desc) = 0;
-        virtual void ReleaseImageView(RHIImageViewHandle imageView) = 0;
+        virtual bool ReleaseImageView(RHIImageViewHandle imageView) = 0;
 
         virtual RHISamplerHandle CreateSampler(RHISamplerDesc&& desc) = 0;
-        virtual void ReleaseSampler(RHISamplerHandle sampler) = 0;
+        virtual bool ReleaseSampler(RHISamplerHandle sampler) = 0;
 
         virtual RHISemaphoreHandle CreateSemaphore() = 0;
         virtual RHISemaphoreHandle CreateTimelineSemaphore(uint64_t initialValue = 0) = 0;
-        virtual void ReleaseSemaphore(RHISemaphoreHandle semaphore) = 0;
+        virtual bool ReleaseSemaphore(RHISemaphoreHandle semaphore) = 0;
 
 
 
         virtual RHIAccelerationStructureHandle CreateAccelerationStructure(const String& name = "Anonymous") = 0;
-        virtual void ReleaseAccelerationStructure(RHIAccelerationStructureHandle handle) = 0;
+        virtual bool ReleaseAccelerationStructure(RHIAccelerationStructureHandle handle) = 0;
 
         // Resource Management (Moved from RHIDevice)
         virtual void BufferMemoryCopy(RHIBufferHandle handle, const void* src, UInt64 size, UInt64 offset = 0) = 0;
@@ -103,8 +103,20 @@ namespace ArisenEngine::RHI
         virtual UInt32 RegisterBindlessResource(RHIImageViewHandle image) = 0;
         virtual UInt32 RegisterBindlessResource(RHIBufferHandle buffer) = 0;
         virtual UInt32 RegisterBindlessResource(RHISamplerHandle sampler) = 0;
-        virtual void UnregisterBindlessResourceImage(UInt32 bindlessIndex) = 0;
-        virtual void UnregisterBindlessResourceBuffer(UInt32 bindlessIndex) = 0;
-        virtual void UnregisterBindlessResourceSampler(UInt32 bindlessIndex) = 0;
+        virtual bool UnregisterBindlessResourceImage(UInt32 bindlessIndex) = 0;
+        virtual bool UnregisterBindlessResourceBuffer(UInt32 bindlessIndex) = 0;
+        virtual bool UnregisterBindlessResourceSampler(UInt32 bindlessIndex) = 0;
+
+        // Export boundaries use these owner-backed checks to reject stale generations
+        // before dispatching an operation into a concrete backend.
+        virtual bool IsAlive(RHIShaderProgramHandle handle) const = 0;
+        virtual bool IsAlive(RHICommandBufferPoolHandle handle) const = 0;
+        virtual bool IsAlive(RHIRenderPassHandle handle) const = 0;
+        virtual bool IsAlive(RHIFrameBufferHandle handle) const = 0;
+        virtual bool IsAlive(RHIBufferHandle handle) const = 0;
+        virtual bool IsAlive(RHIImageHandle handle) const = 0;
+        virtual bool IsAlive(RHIImageViewHandle handle) const = 0;
+        virtual bool IsAlive(RHISamplerHandle handle) const = 0;
+        virtual bool IsAlive(RHISemaphoreHandle handle) const = 0;
     };
 }

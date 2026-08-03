@@ -10,11 +10,23 @@ namespace Arisen.Native.RHI
     {
         private const string DllName = "Core.RHI.dll";
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBufferPool_GetCommandBuffer(IntPtr pool, uint currentFrameIndex, int level, IntPtr outIndex, IntPtr outGeneration);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBufferPool_GetCommandBuffer", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBufferPool_GetCommandBuffer(IntPtr pool, uint currentFrameIndex, int level, IntPtr outIndex, IntPtr outGeneration);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHICommandBufferPool_ReleaseCommandBuffer(IntPtr pool, uint currentFrameIndex, uint index, uint generation);
+        public static void RHICommandBufferPool_GetCommandBuffer(IntPtr pool, uint currentFrameIndex, int level, IntPtr outIndex, IntPtr outGeneration)
+        {
+            Native_RHICommandBufferPool_GetCommandBuffer(pool, currentFrameIndex, level, outIndex, outGeneration);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBufferPool_GetCommandBuffer));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHICommandBufferPool_ReleaseCommandBuffer", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHICommandBufferPool_ReleaseCommandBuffer(IntPtr pool, uint currentFrameIndex, uint index, uint generation);
+
+        public static void RHICommandBufferPool_ReleaseCommandBuffer(IntPtr pool, uint currentFrameIndex, uint index, uint generation)
+        {
+            Native_RHICommandBufferPool_ReleaseCommandBuffer(pool, currentFrameIndex, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHICommandBufferPool_ReleaseCommandBuffer));
+        }
 
     }
 }

@@ -6,6 +6,7 @@
 #include "RHIDeferredDeletionQueue.h"
 
 
+#include <atomic>
 #include <mutex>
 
 namespace ArisenEngine::RHI
@@ -24,9 +25,11 @@ namespace ArisenEngine::RHI
         {
         }
 
-        ~RHIResourceRegistry()
+        ~RHIResourceRegistry() noexcept
         {
-            Shutdown();
+            // Owning backends must call Shutdown while their deferred queue is
+            // alive. Destruction is the final allocation-free fallback.
+            DestroyAllImmediately();
         }
 
         /**
@@ -36,21 +39,59 @@ namespace ArisenEngine::RHI
          */
         void Shutdown()
         {
+            if (m_ShutdownComplete.load(std::memory_order_acquire))
+                return;
+
+            if (!m_DeletionQueue)
+            {
+                DestroyAllImmediately();
+                return;
+            }
+
             std::lock_guard<std::mutex> lock(m_Mutex);
             for (size_t i = 0; i < m_Entries.size(); ++i)
             {
                 auto& e = m_Entries[i];
-                if (e.refCount > 0 && e.item.ptr && e.item.deleter && m_DeletionQueue)
+                if (e.refCount > 0 && e.item.ptr && e.item.deleter)
                 {
-                    // Full shutdown: all dependencies are considered satisfied (0) or 
-                    // we expect the GPU to be idle.
                     RHIDeletionDependencies deps;
+                    // Enqueue owns the item only after it returns successfully. If
+                    // it throws, this entry remains intact for retry or terminal drain.
                     m_DeletionQueue->Enqueue(deps, e.item);
                     e.refCount = 0;
                     e.item = {};
-                    e.generation++; // Invalidate existing handles
+                    e.generation++;
+                    for (auto& ticket : e.maxTickets) ticket = 0;
                 }
             }
+            m_ShutdownComplete.store(true, std::memory_order_release);
+        }
+
+        // The caller must establish that no GPU work can still reference these
+        // resources. This terminal path is allocation-free and is used only when
+        // an already-idle owner cannot publish into the deferred queue.
+        void DestroyAllImmediately() noexcept
+        {
+            for (size_t i = 0; i < m_Entries.size(); ++i)
+            {
+                RHIDeferredDeleteItem item{};
+                {
+                    std::lock_guard<std::mutex> lock(m_Mutex);
+                    auto& e = m_Entries[i];
+                    if (e.refCount == 0)
+                        continue;
+
+                    item = e.item;
+                    e.refCount = 0;
+                    e.item = {};
+                    e.generation++;
+                    for (auto& ticket : e.maxTickets) ticket = 0;
+                }
+
+                if (item.ptr && item.deleter)
+                    item.deleter(item.ptr);
+            }
+            m_ShutdownComplete.store(true, std::memory_order_release);
         }
 
         // Create a new entry with refCount=1.
@@ -86,6 +127,11 @@ namespace ArisenEngine::RHI
             return true;
         }
 
+        void RejectNextReleaseForTesting() noexcept
+        {
+            m_RejectNextReleaseForTesting.store(true, std::memory_order_release);
+        }
+
         // Record resource usage on a specific queue.
         void UpdateTicket(RHIResourceHandle h, RHIQueueType queue, RHIGpuTicket ticket)
         {
@@ -101,40 +147,64 @@ namespace ArisenEngine::RHI
             }
         }
 
-        void Release(RHIResourceHandle h)
+        bool Release(RHIResourceHandle h)
         {
-            RHIDeferredDeleteItem item{};
-            RHIDeletionDependencies finalDeps;
+            RHIDeferredDeleteItem immediateItem{};
             {
                 std::lock_guard<std::mutex> lock(m_Mutex);
                 if (!ValidateUnlocked(h))
-                    return;
+                {
+                    // A completed terminal shutdown has already transferred every
+                    // remaining entry. Deferred parent destructors may still release
+                    // child handles while that queue is being flushed.
+                    return m_ShutdownComplete.load(std::memory_order_acquire) &&
+                        h.IsValid() && h.index < m_Entries.size();
+                }
+
+                if (m_RejectNextReleaseForTesting.exchange(false, std::memory_order_acq_rel))
+                    return false;
 
                 auto& e = m_Entries[h.index];
 
                 if (e.refCount > 1)
                 {
                     e.refCount -= 1;
-                    return;
+                    return true;
                 }
 
-                // last ref
-                item = e.item;
+                RHIDeletionDependencies finalDeps;
                 for (int i = 0; i < 4; ++i)
-                {
                     finalDeps.tickets[i] = e.maxTickets[i];
-                    e.maxTickets[i] = 0;
+
+                // Reserve the reusable slot before ownership transfer. If this
+                // allocation fails, the entry remains fully live.
+                m_FreeList.emplace_back(h.index);
+                if (e.item.ptr && e.item.deleter && m_DeletionQueue)
+                {
+                    try
+                    {
+                        m_DeletionQueue->Enqueue(finalDeps, e.item);
+                    }
+                    catch (...)
+                    {
+                        m_FreeList.pop_back();
+                        throw;
+                    }
                 }
+                else
+                {
+                    immediateItem = e.item;
+                }
+
                 e.item = {};
                 e.refCount = 0;
                 e.generation += 1;
-                m_FreeList.emplace_back(h.index);
+                for (auto& ticket : e.maxTickets) ticket = 0;
             }
 
-            if (item.ptr && item.deleter && m_DeletionQueue)
-            {
-                m_DeletionQueue->Enqueue(finalDeps, item);
-            }
+            if (immediateItem.ptr && immediateItem.deleter)
+                immediateItem.deleter(immediateItem.ptr);
+            return true;
         }
 
         bool IsAlive(RHIResourceHandle h) const
@@ -179,6 +249,8 @@ namespace ArisenEngine::RHI
         }
 
         IRHIDeferredDeletionQueue* m_DeletionQueue{nullptr};
+        std::atomic<bool> m_ShutdownComplete{false};
+        std::atomic<bool> m_RejectNextReleaseForTesting{false};
         mutable std::mutex m_Mutex;
         Containers::Vector<Entry> m_Entries;
         Containers::Vector<UInt32> m_FreeList;

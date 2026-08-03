@@ -47,14 +47,14 @@ namespace ArisenEngine::RHI
         // Internal Allocation / Release (Moved from RHIDevice)
         virtual bool AllocBuffer(RHIBufferHandle handle, RHIBufferDescriptor&& desc) = 0;
         virtual bool AllocBufferDeviceMemory(RHIBufferHandle handle) = 0;
-        virtual void ReleaseBuffer(RHIBufferHandle handle) = 0;
+        virtual bool ReleaseBuffer(RHIBufferHandle handle) = 0;
 
         virtual bool AllocImage(RHIImageHandle handle, RHIImageDescriptor&& desc) = 0;
         virtual bool AllocImageDeviceMemory(RHIImageHandle handle) = 0;
-        virtual void ReleaseImage(RHIImageHandle handle) = 0;
+        virtual bool ReleaseImage(RHIImageHandle handle) = 0;
 
         virtual bool AllocMemoryPool(RHIMemoryPoolHandle handle, UInt64 size, UInt32 usageBits) = 0;
-        virtual void ReleaseMemoryPool(RHIMemoryPoolHandle handle) = 0;
+        virtual bool ReleaseMemoryPool(RHIMemoryPoolHandle handle) = 0;
 
         virtual bool AllocBufferAliased(RHIBufferHandle handle, RHIBufferDescriptor&& desc, RHIMemoryPoolHandle pool,
                                         UInt64 offset) = 0;
@@ -62,16 +62,16 @@ namespace ArisenEngine::RHI
                                        UInt64 offset) = 0;
 
         virtual bool AllocImageView(RHIImageViewHandle handle, RHIImageHandle imageHandle, RHIImageViewDesc&& desc) = 0;
-        virtual void ReleaseImageView(RHIImageViewHandle handle) = 0;
+        virtual bool ReleaseImageView(RHIImageViewHandle handle) = 0;
 
-        virtual void ReleaseSampler(RHISamplerHandle handle) = 0;
-        virtual void ReleaseSemaphore(RHISemaphoreHandle handle) = 0;
+        virtual bool ReleaseSampler(RHISamplerHandle handle) = 0;
+        virtual bool ReleaseSemaphore(RHISemaphoreHandle handle) = 0;
 
-        virtual void ReleaseRenderPass(RHIRenderPassHandle handle) = 0;
-        virtual void ReleaseFrameBuffer(RHIFrameBufferHandle handle) = 0;
-        virtual void ReleasePipeline(RHIPipelineHandle handle) = 0;
+        virtual bool ReleaseRenderPass(RHIRenderPassHandle handle) = 0;
+        virtual bool ReleaseFrameBuffer(RHIFrameBufferHandle handle) = 0;
+        virtual bool ReleasePipeline(RHIPipelineHandle handle) = 0;
 
-        virtual void ReleaseAccelerationStructure(RHIAccelerationStructureHandle handle) = 0;
+        virtual bool ReleaseAccelerationStructure(RHIAccelerationStructureHandle handle) = 0;
         virtual bool AllocAccelerationStructure(RHIAccelerationStructureHandle handle,
                                                 ERHIAccelerationStructureType type, UInt64 size, RHIBufferHandle buffer,
                                                 UInt64 offset) = 0;

@@ -10,23 +10,63 @@ namespace Arisen.Native.RHI
     {
         private const string DllName = "Core.RHI.dll";
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ulong RHIQueue_Submit(IntPtr queue, uint cbIndex, uint cbGeneration, IntPtr descriptor);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIQueue_Submit", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern ulong Native_RHIQueue_Submit(IntPtr queue, uint cbIndex, uint cbGeneration, IntPtr descriptor);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIQueue_Update(IntPtr queue);
+        public static ulong RHIQueue_Submit(IntPtr queue, uint cbIndex, uint cbGeneration, IntPtr descriptor)
+        {
+            ulong result = Native_RHIQueue_Submit(queue, cbIndex, cbGeneration, descriptor);
+            RHIInterop.ThrowIfFailed(nameof(RHIQueue_Submit));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ulong RHIQueue_GetCompletedTicket(IntPtr queue);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIQueue_Update", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIQueue_Update(IntPtr queue);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ulong RHIQueue_GetLatestTicket(IntPtr queue);
+        public static void RHIQueue_Update(IntPtr queue)
+        {
+            Native_RHIQueue_Update(queue);
+            RHIInterop.ThrowIfFailed(nameof(RHIQueue_Update));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIQueue_WaitForTicket(IntPtr queue, ulong ticket);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIQueue_GetCompletedTicket", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern ulong Native_RHIQueue_GetCompletedTicket(IntPtr queue);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int RHIQueue_GetType(IntPtr queue);
+        public static ulong RHIQueue_GetCompletedTicket(IntPtr queue)
+        {
+            ulong result = Native_RHIQueue_GetCompletedTicket(queue);
+            RHIInterop.ThrowIfFailed(nameof(RHIQueue_GetCompletedTicket));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIQueue_GetLatestTicket", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern ulong Native_RHIQueue_GetLatestTicket(IntPtr queue);
+
+        public static ulong RHIQueue_GetLatestTicket(IntPtr queue)
+        {
+            ulong result = Native_RHIQueue_GetLatestTicket(queue);
+            RHIInterop.ThrowIfFailed(nameof(RHIQueue_GetLatestTicket));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIQueue_WaitForTicket", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIQueue_WaitForTicket(IntPtr queue, ulong ticket);
+
+        public static void RHIQueue_WaitForTicket(IntPtr queue, ulong ticket)
+        {
+            Native_RHIQueue_WaitForTicket(queue, ticket);
+            RHIInterop.ThrowIfFailed(nameof(RHIQueue_WaitForTicket));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIQueue_GetType", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern int Native_RHIQueue_GetType(IntPtr queue);
+
+        public static int RHIQueue_GetType(IntPtr queue)
+        {
+            int result = Native_RHIQueue_GetType(queue);
+            RHIInterop.ThrowIfFailed(nameof(RHIQueue_GetType));
+            return result;
+        }
 
     }
 }

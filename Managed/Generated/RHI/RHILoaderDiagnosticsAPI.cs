@@ -10,8 +10,15 @@ namespace Arisen.Native.RHI
     {
         private const string DllName = "Core.RHI.dll";
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHILoader_GetLastErrorMessage();
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHILoader_GetLastErrorMessage", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHILoader_GetLastErrorMessage();
+
+        public static IntPtr RHILoader_GetLastErrorMessage()
+        {
+            IntPtr result = Native_RHILoader_GetLastErrorMessage();
+            RHIInterop.ThrowIfFailed(nameof(RHILoader_GetLastErrorMessage));
+            return result;
+        }
 
     }
 }
