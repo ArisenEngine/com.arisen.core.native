@@ -10,17 +10,44 @@ namespace Arisen.Native.RHI
     {
         private const string DllName = "Core.RHI.dll";
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint RHIDescriptorPool_AddPool(IntPtr pool, IntPtr types, IntPtr counts, uint typeCount, uint maxSets);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDescriptorPool_AddPool", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern uint Native_RHIDescriptorPool_AddPool(IntPtr pool, IntPtr types, IntPtr counts, uint typeCount, uint maxSets);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool RHIDescriptorPool_ResetPool(IntPtr pool, uint poolId);
+        public static uint RHIDescriptorPool_AddPool(IntPtr pool, IntPtr types, IntPtr counts, uint typeCount, uint maxSets)
+        {
+            uint result = Native_RHIDescriptorPool_AddPool(pool, types, counts, typeCount, maxSets);
+            RHIInterop.ThrowIfFailed(nameof(RHIDescriptorPool_AddPool));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint RHIDescriptorPool_AllocDescriptorSet(IntPtr pool, uint poolId, uint layoutIndex, IntPtr pso);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDescriptorPool_ResetPool", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern bool Native_RHIDescriptorPool_ResetPool(IntPtr pool, uint poolId);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIDescriptorPool_UpdateDescriptorSet(IntPtr pool, uint poolId, uint setIndex, IntPtr pso);
+        public static bool RHIDescriptorPool_ResetPool(IntPtr pool, uint poolId)
+        {
+            bool result = Native_RHIDescriptorPool_ResetPool(pool, poolId);
+            RHIInterop.ThrowIfFailed(nameof(RHIDescriptorPool_ResetPool));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDescriptorPool_AllocDescriptorSet", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern uint Native_RHIDescriptorPool_AllocDescriptorSet(IntPtr pool, uint poolId, uint layoutIndex, IntPtr pso);
+
+        public static uint RHIDescriptorPool_AllocDescriptorSet(IntPtr pool, uint poolId, uint layoutIndex, IntPtr pso)
+        {
+            uint result = Native_RHIDescriptorPool_AllocDescriptorSet(pool, poolId, layoutIndex, pso);
+            RHIInterop.ThrowIfFailed(nameof(RHIDescriptorPool_AllocDescriptorSet));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDescriptorPool_UpdateDescriptorSet", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIDescriptorPool_UpdateDescriptorSet(IntPtr pool, uint poolId, uint setIndex, IntPtr pso);
+
+        public static void RHIDescriptorPool_UpdateDescriptorSet(IntPtr pool, uint poolId, uint setIndex, IntPtr pso)
+        {
+            Native_RHIDescriptorPool_UpdateDescriptorSet(pool, poolId, setIndex, pso);
+            RHIInterop.ThrowIfFailed(nameof(RHIDescriptorPool_UpdateDescriptorSet));
+        }
 
     }
 }

@@ -4,6 +4,7 @@
 #include "RHI/Queues/RHIQueueType.h"
 
 #include <functional>
+#include <memory>
 
 namespace ArisenEngine::RHI
 {
@@ -70,6 +71,43 @@ namespace ArisenEngine::RHI
 
         // Enqueue an object to delete when all its dependencies are satisfied.
         virtual void Enqueue(const RHIDeletionDependencies& deps, RHIDeferredDeleteItem item) = 0;
+
+        // Transfers callback ownership only after Enqueue returns successfully.
+        // On failure, callback is restored so the caller can retry or roll back.
+        void EnqueueCallback(const RHIDeletionDependencies& deps, std::function<void()>& callback)
+        {
+            if (!callback)
+                return;
+
+            struct CallbackItem final
+            {
+                std::function<void()> callback;
+            };
+
+            auto item = std::make_unique<CallbackItem>();
+            item->callback = std::move(callback);
+            try
+            {
+                Enqueue(
+                    deps,
+                    RHIDeferredDeleteItem{
+                        item.get(),
+                        +[](void* value)
+                        {
+                            std::unique_ptr<CallbackItem> owned(
+                                static_cast<CallbackItem*>(value));
+                            if (owned->callback)
+                                owned->callback();
+                        },
+                    });
+            }
+            catch (...)
+            {
+                callback = std::move(item->callback);
+                throw;
+            }
+            item.release();
+        }
 
         // Flush all work that is known-safe for a specific queue's progress.
         virtual void Flush(RHIQueueType queue, RHIGpuTicket ticket) = 0;

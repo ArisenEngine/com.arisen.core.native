@@ -21,6 +21,8 @@
 
 namespace ArisenEngine::RHI
 {
+    class RHIDevice;
+
     enum class ERHIRayTracingShaderGroupType
     {
         General = 0,
@@ -46,8 +48,12 @@ namespace ArisenEngine::RHI
 
     public:
         NO_COPY_NO_MOVE(RHIPipelineState)
-        RHIPipelineState();
+        explicit RHIPipelineState(RHIDevice* device);
         virtual ~RHIPipelineState() noexcept;
+
+        RHIDevice* GetOwnerDevice() const { return m_Device; }
+        bool IsAlive(RHIShaderProgramHandle handle) const;
+        bool IsAlive(RHIBufferHandle handle) const;
 
         virtual void AddProgram(RHIShaderProgramHandle handle) = 0;
         virtual void ClearAllPrograms() = 0;
@@ -75,6 +81,10 @@ namespace ArisenEngine::RHI
         virtual void UpdateDescriptorSet(UInt32 layoutIndex, UInt32 binding,
                                          const Containers::Vector<RHIAccelerationStructureHandle>&&
                                          accelerationStructureHandles) = 0;
+
+        virtual bool TryGetDescriptorBinding(UInt32 layoutIndex, UInt32 binding,
+                                             EDescriptorType& type, UInt32& count) const = 0;
+        virtual bool IsDescriptorSetLayoutAlive(UInt32 layoutIndex) const = 0;
 
         virtual void BuildDescriptorSetLayout() = 0;
 
@@ -114,6 +124,7 @@ namespace ArisenEngine::RHI
                                          EFormat stencilFormat) = 0;
 
     private:
+        RHIDevice* m_Device;
         UInt64 m_CacheIdentity;
         RHIInputAssemblyState m_InputAssemblyState;
         RHIRasterizationState m_RasterizationState;

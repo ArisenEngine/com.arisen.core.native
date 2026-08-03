@@ -9,7 +9,7 @@
 // clean C# P/Invoke code without any post-processing.
 //
 // Usage:
-//   // At file scope — declare which DLL and C# namespace this file maps to
+//   // At file scope - declare which DLL and C# namespace this file maps to
 //   ARISEN_BIND_MODULE("Core.RHI.dll")
 //   ARISEN_BIND_NAMESPACE("Arisen.Native.RHI")
 //

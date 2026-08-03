@@ -3,13 +3,13 @@
 #include "Base/FoundationMinimal.h"
 #include "Containers/Containers.h"
 #include "../Handles/RHIHandle.h"
-#include "Base/FoundationMinimal.h"
-#include "Containers/Containers.h"
-#include "../Handles/RHIHandle.h"
 #include "Concurrency/AtomicStack.h"
 #include "../Core/RHIInspector.h"
 #include <atomic>
 #include <mutex>
+#include <new>
+#include <type_traits>
+#include <utility>
 
 
 namespace ArisenEngine
@@ -31,6 +31,8 @@ namespace ArisenEngine
             {
                 TResource resource;
                 std::atomic<UInt32> generation{0};
+                std::atomic<bool> allocated{false};
+                std::atomic<bool> releaseClaimed{false};
 
                 uint32_t nextFreeIndex{0}; // Used by AtomicStack
             };
@@ -95,12 +97,25 @@ namespace ArisenEngine
                     }
                 }
 
+                if (index == Concurrency::Containers::AtomicStack::InvalidIndex)
+                    throw std::bad_alloc();
+
                 auto* entry = GetEntry(index);
-                // Initialize resource via call-back before bumping generation
-                initFn(&entry->resource);
+                entry->releaseClaimed.store(false, std::memory_order_relaxed);
+                // A failed initializer does not own the slot.
+                try
+                {
+                    initFn(&entry->resource);
+                }
+                catch (...)
+                {
+                    m_FreeStack.Push(index, &entry->nextFreeIndex);
+                    throw;
+                }
 
                 // Increment generation and ensure everything before is visible
                 UInt32 newGen = entry->generation.fetch_add(1, std::memory_order_release) + 1;
+                entry->allocated.store(true, std::memory_order_release);
 
                 THandle handle;
                 handle.index = index;
@@ -130,8 +145,9 @@ namespace ArisenEngine
                 if (!entry)
                     return nullptr;
 
-                // Load generation with acquire to see the resource initialization
-                if (entry->generation.load(std::memory_order_acquire) == handle.generation)
+                if (entry->allocated.load(std::memory_order_acquire) &&
+                    !entry->releaseClaimed.load(std::memory_order_acquire) &&
+                    entry->generation.load(std::memory_order_acquire) == handle.generation)
                 {
                     return const_cast<TResource*>(&entry->resource);
                 }
@@ -149,6 +165,21 @@ namespace ArisenEngine
              */
             TResource* Deallocate(THandle handle)
             {
+                return DeallocateAfter(handle, [](TResource*) noexcept {});
+            }
+
+            /**
+             * @brief Exclusively claims a live slot, performs a fallible ownership
+             * transfer, then publishes the slot as free.
+             * @return The resource pointer when both transfer and deallocation commit,
+             * nullptr when the handle is stale or another release owns the slot.
+             * @note While the callback owns the release claim, Get rejects the handle.
+             * If beforeCommit throws or returns false, the claim is rolled back and
+             * the handle becomes resolvable again with the same generation.
+             */
+            template <typename TBeforeCommit>
+            TResource* DeallocateAfter(THandle handle, TBeforeCommit&& beforeCommit)
+            {
                 if (!handle.IsValid())
                     return nullptr;
 
@@ -156,26 +187,63 @@ namespace ArisenEngine
                 if (!entry)
                     return nullptr;
 
-                // We only deallocate if the handle matches exactly.
-                if (entry->generation.load(std::memory_order_acquire) == handle.generation)
+                if (!entry->allocated.load(std::memory_order_acquire) ||
+                    entry->generation.load(std::memory_order_acquire) != handle.generation)
                 {
-                    // Return the pointer for cleanup.
-                    // Note: We don't reset the resource here; the caller is expected to do it
-                    // or the next Allocate(initFn) will overwrite it.
-                    m_FreeStack.Push(handle.index, &entry->nextFreeIndex);
-
-#if ARISEN_RHI__RESOURCE_INSPECTOR
-                    if (m_TrackingCounter)
-                    {
-                        m_TrackingCounter->fetch_sub(1, std::memory_order_relaxed);
-                    }
-#endif
-
-
-                    return &entry->resource;
+                    return nullptr;
                 }
 
-                return nullptr;
+                bool expectedClaimed = false;
+                if (!entry->releaseClaimed.compare_exchange_strong(
+                    expectedClaimed, true, std::memory_order_acq_rel, std::memory_order_acquire))
+                {
+                    return nullptr;
+                }
+
+                if (!entry->allocated.load(std::memory_order_acquire) ||
+                    entry->generation.load(std::memory_order_acquire) != handle.generation)
+                {
+                    entry->releaseClaimed.store(false, std::memory_order_release);
+                    return nullptr;
+                }
+
+                try
+                {
+                    if constexpr (std::is_same_v<
+                        std::invoke_result_t<TBeforeCommit, TResource*>, bool>)
+                    {
+                        if (!std::forward<TBeforeCommit>(beforeCommit)(&entry->resource))
+                        {
+                            entry->releaseClaimed.store(false, std::memory_order_release);
+                            return nullptr;
+                        }
+                    }
+                    else
+                    {
+                        std::forward<TBeforeCommit>(beforeCommit)(&entry->resource);
+                    }
+                }
+                catch (...)
+                {
+                    entry->releaseClaimed.store(false, std::memory_order_release);
+                    throw;
+                }
+
+                // No fallible work may occur after ownership transfer. Publish the
+                // slot as dead before making its index available for reuse.
+                entry->allocated.store(false, std::memory_order_release);
+                entry->releaseClaimed.store(false, std::memory_order_release);
+                m_FreeStack.Push(handle.index, &entry->nextFreeIndex);
+
+#if ARISEN_RHI__RESOURCE_INSPECTOR
+                if (m_TrackingCounter)
+                {
+                    m_TrackingCounter->fetch_sub(1, std::memory_order_relaxed);
+                }
+#endif
+
+                // The value storage remains stable until this slot is allocated again.
+                return &entry->resource;
             }
 
             /**
@@ -212,7 +280,7 @@ namespace ArisenEngine
                     {
                         auto& entry = block[j];
                         UInt32 gen = entry.generation.load(std::memory_order_acquire);
-                        if (gen > 0 && predicate(entry.resource))
+                        if (entry.allocated.load(std::memory_order_acquire) && gen > 0 && predicate(entry.resource))
                         {
                             THandle handle;
                             handle.index = i * BlockSize + j;
@@ -243,16 +311,16 @@ namespace ArisenEngine
                 PoolEntry* newBlock = new PoolEntry[BlockSize];
                 uint32_t baseIdx = blockIdx * BlockSize;
 
-                // Initialize the new block and push to free stack
+                // Publish the block before any of its indices become visible to lock-free readers.
+                m_Blocks[blockIdx].store(newBlock, std::memory_order_release);
+                m_BlockCount.fetch_add(1, std::memory_order_release);
+
                 for (uint32_t i = 0; i < BlockSize; ++i)
                 {
                     // We push in reverse order so we allocate from the front of the block
                     uint32_t entryIdx = baseIdx + (BlockSize - 1 - i);
                     m_FreeStack.Push(entryIdx, &newBlock[BlockSize - 1 - i].nextFreeIndex);
                 }
-
-                m_Blocks[blockIdx].store(newBlock, std::memory_order_release);
-                m_BlockCount.fetch_add(1, std::memory_order_release);
             }
 
             std::atomic<PoolEntry*> m_Blocks[MaxBlocks]{};

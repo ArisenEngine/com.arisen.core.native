@@ -2,6 +2,7 @@
 #include "IRHICommandExecutor.h"
 #include "RHI/Core/RHIDevice.h"
 #include "RHI/Commands/RHICommandBufferPool.h"
+#include "RHI/Pipeline/RHIPipelineCache.h"
 #include "Logger/Logger.h"
 #include "Profiler.h"
 
@@ -14,6 +15,75 @@ namespace ArisenEngine::RHI
 
     RHICommandBuffer::~RHICommandBuffer() noexcept
     {
+    }
+
+    bool RHICommandBuffer::IsAlive(RHIPipelineHandle handle) const
+    {
+        auto* cache = m_Device ? m_Device->GetPipelineCache() : nullptr;
+        return cache && cache->IsAlive(handle);
+    }
+
+    bool RHICommandBuffer::IsAlive(RHIRenderPassHandle handle) const
+    {
+        auto* factory = m_Device ? m_Device->GetFactory() : nullptr;
+        return factory && factory->IsAlive(handle);
+    }
+
+    bool RHICommandBuffer::IsAlive(RHIFrameBufferHandle handle) const
+    {
+        auto* factory = m_Device ? m_Device->GetFactory() : nullptr;
+        return factory && factory->IsAlive(handle);
+    }
+
+    bool RHICommandBuffer::IsAlive(RHIBufferHandle handle) const
+    {
+        auto* factory = m_Device ? m_Device->GetFactory() : nullptr;
+        return factory && factory->IsAlive(handle);
+    }
+
+    bool RHICommandBuffer::IsAlive(RHIImageHandle handle) const
+    {
+        auto* factory = m_Device ? m_Device->GetFactory() : nullptr;
+        return factory && factory->IsAlive(handle);
+    }
+
+    bool RHICommandBuffer::IsAlive(RHIImageViewHandle handle) const
+    {
+        auto* factory = m_Device ? m_Device->GetFactory() : nullptr;
+        return factory && factory->IsAlive(handle);
+    }
+
+    bool RHICommandBuffer::IsAlive(RHIDescriptorPoolHandle handle, UInt32 poolId) const
+    {
+        if (!m_Device || handle != m_Device->GetDescriptorPoolHandle())
+            return false;
+        auto* pool = m_Device->GetDescriptorPool();
+        return pool && pool->IsPoolAlive(poolId);
+    }
+
+    bool RHICommandBuffer::IsAlive(RHIDescriptorPoolHandle handle, UInt32 poolId, UInt32 setIndex) const
+    {
+        if (!m_Device || handle != m_Device->GetDescriptorPoolHandle())
+            return false;
+        auto* pool = m_Device->GetDescriptorPool();
+        return pool && pool->IsDescriptorSetAlive(poolId, setIndex);
+    }
+
+    bool RHICommandBuffer::IsBufferRangeValid(RHIBufferHandle handle, UInt64 offset, UInt64 size) const
+    {
+        auto* factory = m_Device ? m_Device->GetFactory() : nullptr;
+        if (!factory || !factory->IsAlive(handle) || size == 0)
+            return false;
+        const UInt64 bufferSize = factory->GetBufferSize(handle);
+        return offset <= bufferSize && size <= bufferSize - offset;
+    }
+
+    bool RHICommandBuffer::IsPushConstantRangeValid(UInt32 offset, UInt32 size) const
+    {
+        if (!m_Device || size == 0 || (offset & 3U) != 0 || (size & 3U) != 0)
+            return false;
+        const UInt32 limit = m_Device->GetCapabilities().maxPushConstantsSize;
+        return offset <= limit && size <= limit - offset;
     }
 
     void RHICommandBuffer::BeginRenderPass(RenderPassBeginDesc&& desc)

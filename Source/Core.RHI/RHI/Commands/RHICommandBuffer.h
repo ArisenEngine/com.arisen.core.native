@@ -146,6 +146,17 @@ namespace ArisenEngine::RHI
         virtual RHICommandBufferHandle GetRHIHandle() const { return m_Handle; }
         virtual void SetRHIHandle(RHICommandBufferHandle handle) { m_Handle = handle; }
 
+        bool IsAlive(RHIPipelineHandle handle) const;
+        bool IsAlive(RHIRenderPassHandle handle) const;
+        bool IsAlive(RHIFrameBufferHandle handle) const;
+        bool IsAlive(RHIBufferHandle handle) const;
+        bool IsAlive(RHIImageHandle handle) const;
+        bool IsAlive(RHIImageViewHandle handle) const;
+        bool IsAlive(RHIDescriptorPoolHandle handle, UInt32 poolId) const;
+        bool IsAlive(RHIDescriptorPoolHandle handle, UInt32 poolId, UInt32 setIndex) const;
+        bool IsBufferRangeValid(RHIBufferHandle handle, UInt64 offset, UInt64 size) const;
+        bool IsPushConstantRangeValid(UInt32 offset, UInt32 size) const;
+
     protected:
         void SetLatestSubmitTicket(RHIGpuTicket id) { m_LatestSubmitTicket = id; }
         RHIGpuTicket GetLatestSubmitTicket() const { return m_LatestSubmitTicket; }

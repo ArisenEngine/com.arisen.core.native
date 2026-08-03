@@ -72,6 +72,11 @@ namespace ArisenEngine::RHI
             }
         }
 
+        bool IsAlive(RHICommandBufferHandle handle) const
+        {
+            return m_Device && m_Device->GetCommandBuffer(handle) != nullptr;
+        }
+
     protected:
         virtual void InternalRecycle(RHICommandBufferHandle handle)
         {

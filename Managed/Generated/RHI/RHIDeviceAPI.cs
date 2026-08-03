@@ -10,62 +10,189 @@ namespace Arisen.Native.RHI
     {
         private const string DllName = "Core.RHI.dll";
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIDevice_DeviceWaitIdle(IntPtr dev);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_DeviceWaitIdle", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIDevice_DeviceWaitIdle(IntPtr dev);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIDevice_GraphicQueueWaitIdle(IntPtr dev);
+        public static void RHIDevice_DeviceWaitIdle(IntPtr dev)
+        {
+            Native_RHIDevice_DeviceWaitIdle(dev);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_DeviceWaitIdle));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint RHIDevice_GetMaxFramesInFlight(IntPtr dev);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_GraphicQueueWaitIdle", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIDevice_GraphicQueueWaitIdle(IntPtr dev);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIDevice_GetFactory(IntPtr dev);
+        public static void RHIDevice_GraphicQueueWaitIdle(IntPtr dev)
+        {
+            Native_RHIDevice_GraphicQueueWaitIdle(dev);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_GraphicQueueWaitIdle));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIDevice_GetInstance(IntPtr dev);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_GetMaxFramesInFlight", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern uint Native_RHIDevice_GetMaxFramesInFlight(IntPtr dev);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIDevice_SetResolution(IntPtr dev, uint width, uint height);
+        public static uint RHIDevice_GetMaxFramesInFlight(IntPtr dev)
+        {
+            uint result = Native_RHIDevice_GetMaxFramesInFlight(dev);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_GetMaxFramesInFlight));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIDevice_SetObjectName(IntPtr dev, int objectType, ulong handle, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_GetFactory", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIDevice_GetFactory(IntPtr dev);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIDevice_GetCapabilities(IntPtr dev, IntPtr outCapabilities);
+        public static IntPtr RHIDevice_GetFactory(IntPtr dev)
+        {
+            IntPtr result = Native_RHIDevice_GetFactory(dev);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_GetFactory));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIDevice_GetCommandBuffer(IntPtr dev, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_GetInstance", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIDevice_GetInstance(IntPtr dev);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIDevice_GetCommandBufferPool(IntPtr dev, uint index, uint generation);
+        public static IntPtr RHIDevice_GetInstance(IntPtr dev)
+        {
+            IntPtr result = Native_RHIDevice_GetInstance(dev);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_GetInstance));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ulong RHIDevice_GetCompletedSubmitTicket(IntPtr dev);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_SetResolution", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIDevice_SetResolution(IntPtr dev, uint width, uint height);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIDevice_WaitQueueTicket(IntPtr dev, ulong ticket);
+        public static void RHIDevice_SetResolution(IntPtr dev, uint width, uint height)
+        {
+            Native_RHIDevice_SetResolution(dev, width, height);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_SetResolution));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ulong RHIDevice_Submit(IntPtr dev, uint index, uint generation, IntPtr bridgeDesc);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_SetObjectName", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIDevice_SetObjectName(IntPtr dev, int objectType, ulong handle, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIDevice_GetQueue(IntPtr dev, int queueType);
+        public static void RHIDevice_SetObjectName(IntPtr dev, int objectType, ulong handle, [MarshalAs(UnmanagedType.LPUTF8Str)] string name)
+        {
+            Native_RHIDevice_SetObjectName(dev, objectType, handle, name);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_SetObjectName));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIDevice_GetPipelineCache(IntPtr dev);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_GetCapabilities", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIDevice_GetCapabilities(IntPtr dev, IntPtr outCapabilities);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIDevice_GetSurface(IntPtr dev);
+        public static void RHIDevice_GetCapabilities(IntPtr dev, IntPtr outCapabilities)
+        {
+            Native_RHIDevice_GetCapabilities(dev, outCapabilities);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_GetCapabilities));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIDevice_GetDescriptorPool(IntPtr dev);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_GetCommandBuffer", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIDevice_GetCommandBuffer(IntPtr dev, uint index, uint generation);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ulong RHIDevice_GetDescriptorPoolHandle(IntPtr dev);
+        public static IntPtr RHIDevice_GetCommandBuffer(IntPtr dev, uint index, uint generation)
+        {
+            IntPtr result = Native_RHIDevice_GetCommandBuffer(dev, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_GetCommandBuffer));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIDevice_GetSharedWin32Handle(IntPtr dev, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_GetCommandBufferPool", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIDevice_GetCommandBufferPool(IntPtr dev, uint index, uint generation);
+
+        public static IntPtr RHIDevice_GetCommandBufferPool(IntPtr dev, uint index, uint generation)
+        {
+            IntPtr result = Native_RHIDevice_GetCommandBufferPool(dev, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_GetCommandBufferPool));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_GetCompletedSubmitTicket", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern ulong Native_RHIDevice_GetCompletedSubmitTicket(IntPtr dev);
+
+        public static ulong RHIDevice_GetCompletedSubmitTicket(IntPtr dev)
+        {
+            ulong result = Native_RHIDevice_GetCompletedSubmitTicket(dev);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_GetCompletedSubmitTicket));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_WaitQueueTicket", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIDevice_WaitQueueTicket(IntPtr dev, ulong ticket);
+
+        public static void RHIDevice_WaitQueueTicket(IntPtr dev, ulong ticket)
+        {
+            Native_RHIDevice_WaitQueueTicket(dev, ticket);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_WaitQueueTicket));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_Submit", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern ulong Native_RHIDevice_Submit(IntPtr dev, uint index, uint generation, IntPtr bridgeDesc);
+
+        public static ulong RHIDevice_Submit(IntPtr dev, uint index, uint generation, IntPtr bridgeDesc)
+        {
+            ulong result = Native_RHIDevice_Submit(dev, index, generation, bridgeDesc);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_Submit));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_GetQueue", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIDevice_GetQueue(IntPtr dev, int queueType);
+
+        public static IntPtr RHIDevice_GetQueue(IntPtr dev, int queueType)
+        {
+            IntPtr result = Native_RHIDevice_GetQueue(dev, queueType);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_GetQueue));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_GetPipelineCache", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIDevice_GetPipelineCache(IntPtr dev);
+
+        public static IntPtr RHIDevice_GetPipelineCache(IntPtr dev)
+        {
+            IntPtr result = Native_RHIDevice_GetPipelineCache(dev);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_GetPipelineCache));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_GetSurface", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIDevice_GetSurface(IntPtr dev);
+
+        public static IntPtr RHIDevice_GetSurface(IntPtr dev)
+        {
+            IntPtr result = Native_RHIDevice_GetSurface(dev);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_GetSurface));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_GetDescriptorPool", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIDevice_GetDescriptorPool(IntPtr dev);
+
+        public static IntPtr RHIDevice_GetDescriptorPool(IntPtr dev)
+        {
+            IntPtr result = Native_RHIDevice_GetDescriptorPool(dev);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_GetDescriptorPool));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_GetDescriptorPoolHandle", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern ulong Native_RHIDevice_GetDescriptorPoolHandle(IntPtr dev);
+
+        public static ulong RHIDevice_GetDescriptorPoolHandle(IntPtr dev)
+        {
+            ulong result = Native_RHIDevice_GetDescriptorPoolHandle(dev);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_GetDescriptorPoolHandle));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIDevice_GetSharedWin32Handle", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIDevice_GetSharedWin32Handle(IntPtr dev, uint index, uint generation);
+
+        public static IntPtr RHIDevice_GetSharedWin32Handle(IntPtr dev, uint index, uint generation)
+        {
+            IntPtr result = Native_RHIDevice_GetSharedWin32Handle(dev, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIDevice_GetSharedWin32Handle));
+            return result;
+        }
 
     }
 }

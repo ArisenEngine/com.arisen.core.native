@@ -10,6 +10,14 @@ namespace ArisenEngine::Diagnostics
 
     class DIAGNOSTIC_DLL Logger final : public ILogHandler
     {
+        enum class LifecycleState : UInt8
+        {
+            Stopped,
+            Initializing,
+            Accepting,
+            StopRequested
+        };
+
     public:
         NO_COPY_NO_MOVE(Logger)
         NO_COMPARE(Logger)
@@ -27,7 +35,13 @@ namespace ArisenEngine::Diagnostics
         static void Shutdown();
 
     private:
-        bool m_IsInitialize;
+        bool BeginLog(LogCallback& callback);
+        void EndLog();
+
+        std::mutex m_LifecycleMutex;
+        std::condition_variable m_LifecycleChanged;
+        LifecycleState m_LifecycleState;
+        UInt32 m_ActiveLogs;
         LogCallback m_LogCallback;
         Logger();
     };

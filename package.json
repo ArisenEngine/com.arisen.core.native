@@ -2,6 +2,9 @@
   "id": "com.arisen.core.native",
   "name": "Arisen Core Native Provider",
   "version": "1.0.0",
+  "engine": {
+    "minVersion": "0.1.0"
+  },
   "layer": "foundation",
   "description": "The monolithic underlying C\u002B\u002B Core payload encompassing Foundation, HAL, and Diagnostics logic.",
   "type": "hybrid",
@@ -29,7 +32,18 @@
           "Release"
         ]
       },
-      "TracyClient.dll",
+      {
+        "path": "TracyClient.dll",
+        "requiresProfiler": true
+      },
+      {
+        "path": "TracyClient.pdb",
+        "required": false,
+        "configurations": [
+          "Debug"
+        ],
+        "requiresProfiler": true
+      },
       "3rdparty/dxc/bin/x64/dxcompiler.dll",
       "3rdparty/dxc/bin/x64/dxil.dll"
     ]

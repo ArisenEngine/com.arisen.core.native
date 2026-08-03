@@ -10,101 +10,304 @@ namespace Arisen.Native.RHI
     {
         private const string DllName = "Core.RHI.dll";
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_CreateBuffer(IntPtr f, uint createFlagBits, ulong size, uint usage, int sharingMode, uint queueFamilyIndexCount, int memoryUsage, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, IntPtr outIndex, IntPtr outGeneration);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_CreateBuffer", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_CreateBuffer(IntPtr f, uint createFlagBits, ulong size, uint usage, int sharingMode, uint queueFamilyIndexCount, int memoryUsage, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, IntPtr outIndex, IntPtr outGeneration);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_ReleaseBuffer(IntPtr f, uint index, uint generation);
+        public static void RHIFactory_CreateBuffer(IntPtr f, uint createFlagBits, ulong size, uint usage, int sharingMode, uint queueFamilyIndexCount, int memoryUsage, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, IntPtr outIndex, IntPtr outGeneration)
+        {
+            Native_RHIFactory_CreateBuffer(f, createFlagBits, size, usage, sharingMode, queueFamilyIndexCount, memoryUsage, name, outIndex, outGeneration);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_CreateBuffer));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_BufferMemoryCopy(IntPtr f, uint index, uint generation, IntPtr src, ulong size, ulong offset);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_ReleaseBuffer", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_ReleaseBuffer(IntPtr f, uint index, uint generation);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHIFactory_MapBuffer(IntPtr f, uint index, uint generation);
+        public static void RHIFactory_ReleaseBuffer(IntPtr f, uint index, uint generation)
+        {
+            Native_RHIFactory_ReleaseBuffer(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_ReleaseBuffer));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_UnmapBuffer(IntPtr f, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_BufferMemoryCopy", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_BufferMemoryCopy(IntPtr f, uint index, uint generation, IntPtr src, ulong size, ulong offset);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ulong RHIFactory_GetBufferSize(IntPtr f, uint index, uint generation);
+        public static void RHIFactory_BufferMemoryCopy(IntPtr f, uint index, uint generation, IntPtr src, ulong size, ulong offset)
+        {
+            Native_RHIFactory_BufferMemoryCopy(f, index, generation, src, size, offset);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_BufferMemoryCopy));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ulong RHIFactory_GetBufferDeviceAddress(IntPtr f, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_MapBuffer", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHIFactory_MapBuffer(IntPtr f, uint index, uint generation);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_CreateImage(IntPtr f, int imageType, uint width, uint height, uint depth, uint mipLevels, uint arrayLayers, int format, int tiling, int imageLayout, uint usage, int sampleCount, int sharingMode, int memoryUsage, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, IntPtr outIndex, IntPtr outGeneration);
+        public static IntPtr RHIFactory_MapBuffer(IntPtr f, uint index, uint generation)
+        {
+            IntPtr result = Native_RHIFactory_MapBuffer(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_MapBuffer));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_ReleaseImage(IntPtr f, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_UnmapBuffer", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_UnmapBuffer(IntPtr f, uint index, uint generation);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_CreateImageView(IntPtr f, uint imageIndex, uint imageGeneration, int viewType, int format, uint aspectMask, uint baseMipLevel, uint levelCount, uint baseArrayLayer, uint layerCount, IntPtr outIndex, IntPtr outGeneration);
+        public static void RHIFactory_UnmapBuffer(IntPtr f, uint index, uint generation)
+        {
+            Native_RHIFactory_UnmapBuffer(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_UnmapBuffer));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_ReleaseImageView(IntPtr f, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_GetBufferSize", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern ulong Native_RHIFactory_GetBufferSize(IntPtr f, uint index, uint generation);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_CreateSampler(IntPtr f, int magFilter, int minFilter, int mipmapMode, int addressModeU, int addressModeV, int addressModeW, float mipLodBias, int anisotropyEnable, float maxAnisotropy, int compareEnable, int compareOp, float minLod, float maxLod, int borderColor, IntPtr outIndex, IntPtr outGeneration);
+        public static ulong RHIFactory_GetBufferSize(IntPtr f, uint index, uint generation)
+        {
+            ulong result = Native_RHIFactory_GetBufferSize(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_GetBufferSize));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_ReleaseSampler(IntPtr f, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_GetBufferDeviceAddress", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern ulong Native_RHIFactory_GetBufferDeviceAddress(IntPtr f, uint index, uint generation);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_CreateSemaphore(IntPtr f, IntPtr outIndex, IntPtr outGeneration);
+        public static ulong RHIFactory_GetBufferDeviceAddress(IntPtr f, uint index, uint generation)
+        {
+            ulong result = Native_RHIFactory_GetBufferDeviceAddress(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_GetBufferDeviceAddress));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_ReleaseSemaphore(IntPtr f, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_CreateImage", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_CreateImage(IntPtr f, int imageType, uint width, uint height, uint depth, uint mipLevels, uint arrayLayers, int format, int tiling, int imageLayout, uint usage, int sampleCount, int sharingMode, int memoryUsage, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, IntPtr outIndex, IntPtr outGeneration);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_CreateRenderPass(IntPtr f, IntPtr outIndex, IntPtr outGeneration);
+        public static void RHIFactory_CreateImage(IntPtr f, int imageType, uint width, uint height, uint depth, uint mipLevels, uint arrayLayers, int format, int tiling, int imageLayout, uint usage, int sampleCount, int sharingMode, int memoryUsage, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, IntPtr outIndex, IntPtr outGeneration)
+        {
+            Native_RHIFactory_CreateImage(f, imageType, width, height, depth, mipLevels, arrayLayers, format, tiling, imageLayout, usage, sampleCount, sharingMode, memoryUsage, name, outIndex, outGeneration);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_CreateImage));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_ReleaseRenderPass(IntPtr f, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_ReleaseImage", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_ReleaseImage(IntPtr f, uint index, uint generation);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_CreateFrameBuffer(IntPtr f, IntPtr outIndex, IntPtr outGeneration);
+        public static void RHIFactory_ReleaseImage(IntPtr f, uint index, uint generation)
+        {
+            Native_RHIFactory_ReleaseImage(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_ReleaseImage));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_ReleaseFrameBuffer(IntPtr f, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_CreateImageView", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_CreateImageView(IntPtr f, uint imageIndex, uint imageGeneration, int viewType, int format, uint aspectMask, uint baseMipLevel, uint levelCount, uint baseArrayLayer, uint layerCount, IntPtr outIndex, IntPtr outGeneration);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_CreateCommandBufferPool(IntPtr f, int queueType, IntPtr outIndex, IntPtr outGeneration);
+        public static void RHIFactory_CreateImageView(IntPtr f, uint imageIndex, uint imageGeneration, int viewType, int format, uint aspectMask, uint baseMipLevel, uint levelCount, uint baseArrayLayer, uint layerCount, IntPtr outIndex, IntPtr outGeneration)
+        {
+            Native_RHIFactory_CreateImageView(f, imageIndex, imageGeneration, viewType, format, aspectMask, baseMipLevel, levelCount, baseArrayLayer, layerCount, outIndex, outGeneration);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_CreateImageView));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_ReleaseCommandBufferPool(IntPtr f, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_ReleaseImageView", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_ReleaseImageView(IntPtr f, uint index, uint generation);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int RHIFactory_GetImageViewFormat(IntPtr f, uint index, uint generation);
+        public static void RHIFactory_ReleaseImageView(IntPtr f, uint index, uint generation)
+        {
+            Native_RHIFactory_ReleaseImageView(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_ReleaseImageView));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint RHIFactory_GetImageViewWidth(IntPtr f, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_CreateSampler", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_CreateSampler(IntPtr f, int magFilter, int minFilter, int mipmapMode, int addressModeU, int addressModeV, int addressModeW, float mipLodBias, int anisotropyEnable, float maxAnisotropy, int compareEnable, int compareOp, float minLod, float maxLod, int borderColor, IntPtr outIndex, IntPtr outGeneration);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint RHIFactory_GetImageViewHeight(IntPtr f, uint index, uint generation);
+        public static void RHIFactory_CreateSampler(IntPtr f, int magFilter, int minFilter, int mipmapMode, int addressModeU, int addressModeV, int addressModeW, float mipLodBias, int anisotropyEnable, float maxAnisotropy, int compareEnable, int compareOp, float minLod, float maxLod, int borderColor, IntPtr outIndex, IntPtr outGeneration)
+        {
+            Native_RHIFactory_CreateSampler(f, magFilter, minFilter, mipmapMode, addressModeU, addressModeV, addressModeW, mipLodBias, anisotropyEnable, maxAnisotropy, compareEnable, compareOp, minLod, maxLod, borderColor, outIndex, outGeneration);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_CreateSampler));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_CreateGPUProgram(IntPtr f, IntPtr outIndex, IntPtr outGeneration);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_ReleaseSampler", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_ReleaseSampler(IntPtr f, uint index, uint generation);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_ReleaseGPUProgram(IntPtr f, uint index, uint generation);
+        public static void RHIFactory_ReleaseSampler(IntPtr f, uint index, uint generation)
+        {
+            Native_RHIFactory_ReleaseSampler(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_ReleaseSampler));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int RHIFactory_AttachProgramByteCode(IntPtr f, uint index, uint generation, int stage, IntPtr code, ulong size, [MarshalAs(UnmanagedType.LPUTF8Str)] string entryPoint);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_CreateSemaphore", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_CreateSemaphore(IntPtr f, IntPtr outIndex, IntPtr outGeneration);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint RHIFactory_RegisterBindlessResourceImage(IntPtr f, uint index, uint generation);
+        public static void RHIFactory_CreateSemaphore(IntPtr f, IntPtr outIndex, IntPtr outGeneration)
+        {
+            Native_RHIFactory_CreateSemaphore(f, outIndex, outGeneration);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_CreateSemaphore));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint RHIFactory_RegisterBindlessResourceBuffer(IntPtr f, uint index, uint generation);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_ReleaseSemaphore", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_ReleaseSemaphore(IntPtr f, uint index, uint generation);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ulong RHIFactory_BufferMemoryCopyAsync(IntPtr f, uint index, uint generation, IntPtr src, ulong size, ulong offset);
+        public static void RHIFactory_ReleaseSemaphore(IntPtr f, uint index, uint generation)
+        {
+            Native_RHIFactory_ReleaseSemaphore(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_ReleaseSemaphore));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ulong RHIFactory_FlushTransfers(IntPtr f);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_CreateRenderPass", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_CreateRenderPass(IntPtr f, IntPtr outIndex, IntPtr outGeneration);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHIFactory_UpdateTransfers(IntPtr f);
+        public static void RHIFactory_CreateRenderPass(IntPtr f, IntPtr outIndex, IntPtr outGeneration)
+        {
+            Native_RHIFactory_CreateRenderPass(f, outIndex, outGeneration);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_CreateRenderPass));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_ReleaseRenderPass", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_ReleaseRenderPass(IntPtr f, uint index, uint generation);
+
+        public static void RHIFactory_ReleaseRenderPass(IntPtr f, uint index, uint generation)
+        {
+            Native_RHIFactory_ReleaseRenderPass(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_ReleaseRenderPass));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_CreateFrameBuffer", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_CreateFrameBuffer(IntPtr f, IntPtr outIndex, IntPtr outGeneration);
+
+        public static void RHIFactory_CreateFrameBuffer(IntPtr f, IntPtr outIndex, IntPtr outGeneration)
+        {
+            Native_RHIFactory_CreateFrameBuffer(f, outIndex, outGeneration);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_CreateFrameBuffer));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_ReleaseFrameBuffer", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_ReleaseFrameBuffer(IntPtr f, uint index, uint generation);
+
+        public static void RHIFactory_ReleaseFrameBuffer(IntPtr f, uint index, uint generation)
+        {
+            Native_RHIFactory_ReleaseFrameBuffer(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_ReleaseFrameBuffer));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_CreateCommandBufferPool", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_CreateCommandBufferPool(IntPtr f, int queueType, IntPtr outIndex, IntPtr outGeneration);
+
+        public static void RHIFactory_CreateCommandBufferPool(IntPtr f, int queueType, IntPtr outIndex, IntPtr outGeneration)
+        {
+            Native_RHIFactory_CreateCommandBufferPool(f, queueType, outIndex, outGeneration);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_CreateCommandBufferPool));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_ReleaseCommandBufferPool", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_ReleaseCommandBufferPool(IntPtr f, uint index, uint generation);
+
+        public static void RHIFactory_ReleaseCommandBufferPool(IntPtr f, uint index, uint generation)
+        {
+            Native_RHIFactory_ReleaseCommandBufferPool(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_ReleaseCommandBufferPool));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_GetImageViewFormat", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern int Native_RHIFactory_GetImageViewFormat(IntPtr f, uint index, uint generation);
+
+        public static int RHIFactory_GetImageViewFormat(IntPtr f, uint index, uint generation)
+        {
+            int result = Native_RHIFactory_GetImageViewFormat(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_GetImageViewFormat));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_GetImageViewWidth", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern uint Native_RHIFactory_GetImageViewWidth(IntPtr f, uint index, uint generation);
+
+        public static uint RHIFactory_GetImageViewWidth(IntPtr f, uint index, uint generation)
+        {
+            uint result = Native_RHIFactory_GetImageViewWidth(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_GetImageViewWidth));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_GetImageViewHeight", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern uint Native_RHIFactory_GetImageViewHeight(IntPtr f, uint index, uint generation);
+
+        public static uint RHIFactory_GetImageViewHeight(IntPtr f, uint index, uint generation)
+        {
+            uint result = Native_RHIFactory_GetImageViewHeight(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_GetImageViewHeight));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_CreateGPUProgram", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_CreateGPUProgram(IntPtr f, IntPtr outIndex, IntPtr outGeneration);
+
+        public static void RHIFactory_CreateGPUProgram(IntPtr f, IntPtr outIndex, IntPtr outGeneration)
+        {
+            Native_RHIFactory_CreateGPUProgram(f, outIndex, outGeneration);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_CreateGPUProgram));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_ReleaseGPUProgram", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_ReleaseGPUProgram(IntPtr f, uint index, uint generation);
+
+        public static void RHIFactory_ReleaseGPUProgram(IntPtr f, uint index, uint generation)
+        {
+            Native_RHIFactory_ReleaseGPUProgram(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_ReleaseGPUProgram));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_AttachProgramByteCode", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern int Native_RHIFactory_AttachProgramByteCode(IntPtr f, uint index, uint generation, int stage, IntPtr code, ulong size, [MarshalAs(UnmanagedType.LPUTF8Str)] string entryPoint);
+
+        public static int RHIFactory_AttachProgramByteCode(IntPtr f, uint index, uint generation, int stage, IntPtr code, ulong size, [MarshalAs(UnmanagedType.LPUTF8Str)] string entryPoint)
+        {
+            int result = Native_RHIFactory_AttachProgramByteCode(f, index, generation, stage, code, size, entryPoint);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_AttachProgramByteCode));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_RegisterBindlessResourceImage", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern uint Native_RHIFactory_RegisterBindlessResourceImage(IntPtr f, uint index, uint generation);
+
+        public static uint RHIFactory_RegisterBindlessResourceImage(IntPtr f, uint index, uint generation)
+        {
+            uint result = Native_RHIFactory_RegisterBindlessResourceImage(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_RegisterBindlessResourceImage));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_RegisterBindlessResourceBuffer", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern uint Native_RHIFactory_RegisterBindlessResourceBuffer(IntPtr f, uint index, uint generation);
+
+        public static uint RHIFactory_RegisterBindlessResourceBuffer(IntPtr f, uint index, uint generation)
+        {
+            uint result = Native_RHIFactory_RegisterBindlessResourceBuffer(f, index, generation);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_RegisterBindlessResourceBuffer));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_BufferMemoryCopyAsync", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern ulong Native_RHIFactory_BufferMemoryCopyAsync(IntPtr f, uint index, uint generation, IntPtr src, ulong size, ulong offset);
+
+        public static ulong RHIFactory_BufferMemoryCopyAsync(IntPtr f, uint index, uint generation, IntPtr src, ulong size, ulong offset)
+        {
+            ulong result = Native_RHIFactory_BufferMemoryCopyAsync(f, index, generation, src, size, offset);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_BufferMemoryCopyAsync));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_FlushTransfers", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern ulong Native_RHIFactory_FlushTransfers(IntPtr f);
+
+        public static ulong RHIFactory_FlushTransfers(IntPtr f)
+        {
+            ulong result = Native_RHIFactory_FlushTransfers(f);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_FlushTransfers));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHIFactory_UpdateTransfers", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHIFactory_UpdateTransfers(IntPtr f);
+
+        public static void RHIFactory_UpdateTransfers(IntPtr f)
+        {
+            Native_RHIFactory_UpdateTransfers(f);
+            RHIInterop.ThrowIfFailed(nameof(RHIFactory_UpdateTransfers));
+        }
 
     }
 }

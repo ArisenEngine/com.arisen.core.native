@@ -10,38 +10,121 @@ namespace Arisen.Native.RHI
     {
         private const string DllName = "Core.RHI.dll";
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ulong RHISwapChain_BeginFrame(IntPtr swapChain, uint frameIndex);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISwapChain_BeginFrame", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern ulong Native_RHISwapChain_BeginFrame(IntPtr swapChain, uint frameIndex);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHISwapChain_EndFrame(IntPtr swapChain, uint frameIndex);
+        public static ulong RHISwapChain_BeginFrame(IntPtr swapChain, uint frameIndex)
+        {
+            ulong result = Native_RHISwapChain_BeginFrame(swapChain, frameIndex);
+            RHIInterop.ThrowIfFailed(nameof(RHISwapChain_BeginFrame));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ulong RHISwapChain_GetImageView(IntPtr swapChain, uint frameIndex);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISwapChain_EndFrame", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHISwapChain_EndFrame(IntPtr swapChain, uint frameIndex);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHISwapChain_GetSharedWin32Handle(IntPtr swapChain, uint frameIndex);
+        public static void RHISwapChain_EndFrame(IntPtr swapChain, uint frameIndex)
+        {
+            Native_RHISwapChain_EndFrame(swapChain, frameIndex);
+            RHIInterop.ThrowIfFailed(nameof(RHISwapChain_EndFrame));
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ulong RHISwapChain_GetSharedMemorySize(IntPtr swapChain, uint frameIndex);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISwapChain_RetireFrame", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern ulong Native_RHISwapChain_RetireFrame(IntPtr swapChain, uint frameIndex);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHISwapChain_GetRenderFinishedSemaphoreWin32Handle(IntPtr swapChain, uint frameIndex);
+        public static ulong RHISwapChain_RetireFrame(IntPtr swapChain, uint frameIndex)
+        {
+            ulong result = Native_RHISwapChain_RetireFrame(swapChain, frameIndex);
+            RHIInterop.ThrowIfFailed(nameof(RHISwapChain_RetireFrame));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr RHISwapChain_CreateConsumedSemaphoreWin32Handle(IntPtr swapChain, uint frameIndex);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISwapChain_GetImageView", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern ulong Native_RHISwapChain_GetImageView(IntPtr swapChain, uint frameIndex);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHISwapChain_CompleteConsumedSemaphoreWin32Handle(IntPtr swapChain, IntPtr handle);
+        public static ulong RHISwapChain_GetImageView(IntPtr swapChain, uint frameIndex)
+        {
+            ulong result = Native_RHISwapChain_GetImageView(swapChain, frameIndex);
+            RHIInterop.ThrowIfFailed(nameof(RHISwapChain_GetImageView));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHISwapChain_ReleaseConsumedSemaphoreWin32Handle(IntPtr swapChain, IntPtr handle);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISwapChain_GetSharedWin32Handle", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHISwapChain_GetSharedWin32Handle(IntPtr swapChain, uint frameIndex);
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool RHISwapChain_AcknowledgeExternalConsumerRelease(IntPtr swapChain);
+        public static IntPtr RHISwapChain_GetSharedWin32Handle(IntPtr swapChain, uint frameIndex)
+        {
+            IntPtr result = Native_RHISwapChain_GetSharedWin32Handle(swapChain, frameIndex);
+            RHIInterop.ThrowIfFailed(nameof(RHISwapChain_GetSharedWin32Handle));
+            return result;
+        }
 
-        [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RHISwapChain_SetResolution(IntPtr sc, uint width, uint height);
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISwapChain_GetSharedMemorySize", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern ulong Native_RHISwapChain_GetSharedMemorySize(IntPtr swapChain, uint frameIndex);
+
+        public static ulong RHISwapChain_GetSharedMemorySize(IntPtr swapChain, uint frameIndex)
+        {
+            ulong result = Native_RHISwapChain_GetSharedMemorySize(swapChain, frameIndex);
+            RHIInterop.ThrowIfFailed(nameof(RHISwapChain_GetSharedMemorySize));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISwapChain_GetRenderFinishedSemaphoreWin32Handle", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHISwapChain_GetRenderFinishedSemaphoreWin32Handle(IntPtr swapChain, uint frameIndex);
+
+        public static IntPtr RHISwapChain_GetRenderFinishedSemaphoreWin32Handle(IntPtr swapChain, uint frameIndex)
+        {
+            IntPtr result = Native_RHISwapChain_GetRenderFinishedSemaphoreWin32Handle(swapChain, frameIndex);
+            RHIInterop.ThrowIfFailed(nameof(RHISwapChain_GetRenderFinishedSemaphoreWin32Handle));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISwapChain_CreateConsumedSemaphoreWin32Handle", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern IntPtr Native_RHISwapChain_CreateConsumedSemaphoreWin32Handle(IntPtr swapChain, uint frameIndex);
+
+        public static IntPtr RHISwapChain_CreateConsumedSemaphoreWin32Handle(IntPtr swapChain, uint frameIndex)
+        {
+            IntPtr result = Native_RHISwapChain_CreateConsumedSemaphoreWin32Handle(swapChain, frameIndex);
+            RHIInterop.ThrowIfFailed(nameof(RHISwapChain_CreateConsumedSemaphoreWin32Handle));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISwapChain_CompleteConsumedSemaphoreWin32Handle", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHISwapChain_CompleteConsumedSemaphoreWin32Handle(IntPtr swapChain, IntPtr handle);
+
+        public static void RHISwapChain_CompleteConsumedSemaphoreWin32Handle(IntPtr swapChain, IntPtr handle)
+        {
+            Native_RHISwapChain_CompleteConsumedSemaphoreWin32Handle(swapChain, handle);
+            RHIInterop.ThrowIfFailed(nameof(RHISwapChain_CompleteConsumedSemaphoreWin32Handle));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISwapChain_ReleaseConsumedSemaphoreWin32Handle", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHISwapChain_ReleaseConsumedSemaphoreWin32Handle(IntPtr swapChain, IntPtr handle);
+
+        public static void RHISwapChain_ReleaseConsumedSemaphoreWin32Handle(IntPtr swapChain, IntPtr handle)
+        {
+            Native_RHISwapChain_ReleaseConsumedSemaphoreWin32Handle(swapChain, handle);
+            RHIInterop.ThrowIfFailed(nameof(RHISwapChain_ReleaseConsumedSemaphoreWin32Handle));
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISwapChain_AcknowledgeExternalConsumerRelease", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern bool Native_RHISwapChain_AcknowledgeExternalConsumerRelease(IntPtr swapChain);
+
+        public static bool RHISwapChain_AcknowledgeExternalConsumerRelease(IntPtr swapChain)
+        {
+            bool result = Native_RHISwapChain_AcknowledgeExternalConsumerRelease(swapChain);
+            RHIInterop.ThrowIfFailed(nameof(RHISwapChain_AcknowledgeExternalConsumerRelease));
+            return result;
+        }
+
+        [SuppressUnmanagedCodeSecurity, DllImport(DllName, EntryPoint = "RHISwapChain_SetResolution", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        private static extern void Native_RHISwapChain_SetResolution(IntPtr sc, uint width, uint height);
+
+        public static void RHISwapChain_SetResolution(IntPtr sc, uint width, uint height)
+        {
+            Native_RHISwapChain_SetResolution(sc, width, height);
+            RHIInterop.ThrowIfFailed(nameof(RHISwapChain_SetResolution));
+        }
 
     }
 }

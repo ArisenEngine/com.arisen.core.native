@@ -11,7 +11,6 @@ namespace ArisenEngine::Diagnostics
     {
     public:
         static void SetHandler(ILogHandler* handler);
-        static ILogHandler* GetHandler() { return s_Handler; }
 
         // Generic log methods (support const char*, std::string, etc.)
         template <typename T>
@@ -123,7 +122,13 @@ namespace ArisenEngine::Diagnostics
         static void InternalLog(LogLevel level, const char* msg, const std::source_location& loc,
                                 const char* thread_name = nullptr);
 
+        static ILogHandler* AcquireHandler();
+        static void ReleaseHandler();
+
         static ILogHandler* s_Handler;
+        static std::mutex s_HandlerMutex;
+        static std::condition_variable s_HandlerDrained;
+        static uint32_t s_ActiveHandlerCalls;
     };
 }
 
