@@ -17,7 +17,7 @@ namespace Arisen.Native.HAL
         public static extern uint CreateRenderWindow(IntPtr host, IntPtr callback, int width, int height);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint CreateRenderWindowWithResizeCallback(IntPtr host, IntPtr callback, IntPtr resizeCallback, IntPtr resizingCallback, int width, int height);
+        public static extern uint CreateRenderWindowWithResizeCallback(IntPtr host, IntPtr callback, IntPtr resizeCallback, IntPtr resizingCallback, int width, int height, uint visible);
 
         [SuppressUnmanagedCodeSecurity, DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void RemoveRenderSurface(uint id);

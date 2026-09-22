@@ -16,7 +16,7 @@ namespace ArisenEngine::HAL
     HAL_DLL UInt32 CreateRenderWindow(WindowHandle host, WindowProc callback, SInt32 width, SInt32 height);
     HAL_DLL UInt32 CreateRenderWindowWithResizeCallback(WindowHandle host, WindowProc callback,
                                                         WindowExitResize resizeCallback, WindowResize resizingCallback,
-                                                        SInt32 width, SInt32 height);
+                                                        SInt32 width, SInt32 height, UInt32 visible);
     HAL_DLL void RemoveRenderSurface(UInt32 id);
     HAL_DLL void ResizeRenderSurface(UInt32 id, UInt32 width, UInt32 height);
     HAL_DLL WindowHandle GetWindowHandle(UInt32 id);

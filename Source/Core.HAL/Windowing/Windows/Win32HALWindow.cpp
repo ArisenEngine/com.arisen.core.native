@@ -120,7 +120,17 @@ namespace ArisenEngine::HAL
                 break;
 
             case WM_SIZE:
-                if (wparam == SIZE_MINIMIZED) break;
+                if (wparam == SIZE_MINIMIZED)
+                {
+                    // A minimized window keeps its authored size in the HAL, but its client area
+                    // is no longer presentable: D3D/Vulkan surfaces report a zero extent until the
+                    // window is restored. Report the transition so a stalled render or validation
+                    // run can be traced back to the window manager instead of the renderer.
+                    LOG_INFOF(
+                        "[Win32HALWindow]: WM_SIZE minimized. ID={0} Hwnd={1}",
+                        (unsigned)GetWindowID(hwnd), (void*)hwnd);
+                    break;
+                }
 
                 info = GetInfoFromHandle(hwnd);
                 if (info)
@@ -366,6 +376,7 @@ namespace ArisenEngine::HAL
         WindowExitResize resizeCallback{initInfo ? initInfo->resizeCallback : nullptr};
         WindowResize resizingCallback{initInfo ? initInfo->resizingCallback : nullptr};
         WindowHandle parent{initInfo ? initInfo->parent : nullptr};
+        const bool visible{initInfo == nullptr || initInfo->visible != 0u};
 
         // set up window class
         WNDCLASSEXW wc;
@@ -416,11 +427,17 @@ namespace ArisenEngine::HAL
                   (unsigned)id, info.clientArea.left, info.clientArea.top, info.clientArea.right,
                   info.clientArea.bottom);
 
+        // info.style keeps the intended visible style so a later style restore (leaving
+        // fullscreen, for example) shows the window again. A hidden window is created
+        // without WS_VISIBLE and is revealed by the platform layer when the runtime has
+        // a frame to show.
+        const DWORD createStyle{visible ? info.style : (info.style & ~static_cast<DWORD>(WS_VISIBLE))};
+
         info.hwnd = CreateWindowExW(
             0,
             wc.lpszClassName,
             caption,
-            info.style,
+            createStyle,
             sleft,
             stop,
             swidth,
@@ -449,8 +466,11 @@ namespace ArisenEngine::HAL
 
             // assert(GetLastError() == 0);
 
-            ShowWindow(info.hwnd, SW_NORMAL);
-            UpdateWindow(info.hwnd);
+            if (visible)
+            {
+                ShowWindow(info.hwnd, SW_NORMAL);
+                UpdateWindow(info.hwnd);
+            }
             return Window{id};
         }
 

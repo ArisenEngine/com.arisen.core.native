@@ -35,6 +35,10 @@ namespace ArisenEngine::HAL
         SInt32 top{0};
         SInt32 width{1920};
         SInt32 height{1080};
+        // A hidden window is created without WS_VISIBLE and is never shown by the HAL.
+        // The standalone runtime reveals its main window through the platform provider
+        // once a frame that owns the startup world has been presented.
+        UInt32 visible{1};
     };
 
 #else
@@ -57,6 +61,7 @@ namespace ArisenEngine::HAL
 		SInt32                top{ 0 };
 		SInt32                width{ 1920 };
 		SInt32                height{ 1080 };
+		UInt32                visible{ 1 };
 	};
 #endif
 }

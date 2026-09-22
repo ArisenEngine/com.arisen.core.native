@@ -34,11 +34,12 @@ namespace ArisenEngine::HAL
     }
 
     UInt32 CreateRenderWindowWithResizeCallback(WindowHandle host, WindowProc callback, WindowExitResize resizeCallback,
-                                                WindowResize resizingCallback, SInt32 width, SInt32 height)
+                                                WindowResize resizingCallback, SInt32 width, SInt32 height,
+                                                UInt32 visible)
     {
         WindowInitInfo info{
             callback, resizeCallback, resizingCallback, host, nullptr, nullptr, CW_USEDEFAULT, CW_USEDEFAULT, width,
-            height
+            height, visible
         };
         RenderWindow surface{CreateNewWindow(&info)};
         ASSERT(surface.window.IsValid());
