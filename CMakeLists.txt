@@ -50,6 +50,14 @@ endfunction()
 # Autonomous Dependencies
 # ============================================================================
 
+# Every 3rdparty library this package ships is declared as a shared native payload
+# (spdlogd.dll for Debug, spdlog.dll for Release, TracyClient.dll), so the shared-library policy has
+# to be in effect before the subdirectories are configured. Forcing it inside the Tracy block instead
+# made spdlog shared only from the second configure onward: the first configure of a fresh build tree
+# created spdlog STATIC, produced no spdlogd.dll, and the post-build native-payload inventory check
+# then failed the build.
+set(BUILD_SHARED_LIBS ON CACHE BOOL "Build 3rdparty libraries as shared libraries." FORCE)
+
 # Add local spdlog
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/spdlog/CMakeLists.txt")
     add_subdirectory(3rdparty/spdlog)
@@ -66,7 +74,6 @@ if(ARISEN_PROFILER_ENABLED)
 
     set(TRACY_ENABLE ON CACHE BOOL "Enable Tracy" FORCE)
     set(TRACY_STATIC OFF CACHE BOOL "" FORCE)
-    set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
     add_subdirectory(3rdparty/tracy)
     set_target_properties(TracyClient PROPERTIES FOLDER "3rdparty")
 endif()
